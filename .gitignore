@@ -35,9 +35,8 @@ data/exercises_library.json
 Thumbs.db
 ehthumbs.db
 
-# Claude (keep settings.json tracked for project config)
-.claude/*
-!.claude/settings.json
+# Claude Code project config (contains local paths)
+.claude/
 
 # Temp
 /tmp/
@@ -90,6 +89,9 @@ miniapp/project.private.config.json
 
 # Claude Code project config (contains local paths & server IP)
 /CLAUDE.md
+
+# Personal deployment script (contains VPS IP & SSH config)
+/deploy.sh
 
 # Setup URL temp file
 data/.setup_url

@@ -5,7 +5,7 @@
 
 用法:
     python scripts/run_all_benchmarks.py
-    python scripts/run_all_benchmarks.py --output ../项目相关总结/fitai-web/02_学术论文/benchmark_results/
+    python scripts/run_all_benchmarks.py --output ../benchmark_results/
 """
 import json
 import os
