@@ -109,6 +109,9 @@ logs/
 # WeChat miniapp CI private key (sensitive)
 private.*.key
 
+# WeChat miniapp CI upload script (contains AppID & references private key)
+miniapp/ci.upload.js
+
 # Miniapp build artifacts
 miniapp/node_modules/
 miniapp/bd5662f779881330650b48d63c96e131/

@@ -31,7 +31,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "3.3.4",
-  "appid": "wxe96ce39f95340ec8",
+  "appid": "wx_your_appid_here",
   "projectname": "FitAI",
   "simulatorPluginLibVersion": {},
   "editorSetting": {}
