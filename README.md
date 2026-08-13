@@ -42,7 +42,7 @@ FitAI-Web is a full-stack, open-source AI fitness coaching platform that combine
 
 ```bash
 # Clone and configure
-git clone https://github.com/yourusername/fitai-web.git
+git clone https://github.com/guojun-1111/fitai-web.git
 cd fitai-web
 cp .env.example .env
 # Edit .env with your LLM API key
@@ -181,7 +181,7 @@ If you use FitAI-Web's algorithms in your research, please cite:
   author = {Chen, Guojun},
   title = {FitAI-Web: Open-Source AI Fitness Coach with Causal Health Intelligence},
   year = {2026},
-  url = {https://github.com/yourusername/fitai-web}
+  url = {https://github.com/guojun-1111/fitai-web}
 }
 ```
 
@@ -191,12 +191,10 @@ Paper available on arXiv: *"Probabilistic Inference for Lightweight Edge Fitness
 
 ## Community
 
-- [Discord](https://discord.gg/placeholder) — Chat with the community
-- [GitHub Discussions](https://github.com/yourusername/fitai-web/discussions)
-- [arXiv Paper](https://arxiv.org/abs/placeholder)
+- [GitHub Discussions](https://github.com/guojun-1111/fitai-web/discussions)
 
 ---
 
 <p align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/yourusername">Chen Guojun</a> · Hangzhou Dianzi University</sub>
+  <sub>Built with ❤️ by <a href="https://github.com/guojun-1111">Chen Guojun</a> · Hangzhou Dianzi University</sub>
 </p>
