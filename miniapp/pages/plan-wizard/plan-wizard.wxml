@@ -1,0 +1,230 @@
+<view class="theme-{{_theme}} container">
+
+  <!-- Step Indicator (compact 7-dot) -->
+  <view wx:if="{{step <= totalSteps}}" class="step-indicator">
+    <block wx:for="{{[1,2,3,4,5,6,7]}}" wx:key="*this" wx:for-item="s">
+      <view class="si-dot {{step >= s ? 'active' : ''}} {{step > s ? 'done' : ''}}"></view>
+      <view wx:if="{{s < 7}}" class="si-line {{step > s ? 'active' : ''}}"></view>
+    </block>
+  </view>
+
+  <!-- ═══ Step 1: TTM Stage ═══ -->
+  <view wx:if="{{step === 1}}" class="step-content">
+    <view class="step-title">最近 3 个月，你在运动吗？</view>
+    <view class="step-subtitle">不用精确，选最接近的就好</view>
+    <view class="step-options">
+      <view wx:for="{{ttmStages}}" wx:key="value" class="step-option ttm-card {{ttmStage === item.value ? 'selected' : ''}}"
+        data-value="{{item.value}}" bindtap="selectTTM">
+        <text class="so-emoji">{{item.emoji}}</text>
+        <view class="so-row">
+          <text class="so-label">{{item.label}}</text>
+          <text class="so-desc">{{item.desc}}</text>
+        </view>
+        <text wx:if="{{ttmStage === item.value}}" class="so-check">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ═══ Step 2: SDT Motivation ═══ -->
+  <view wx:if="{{step === 2}}" class="step-content">
+    <view class="step-title">是什么让你想运动的？</view>
+    <view class="step-subtitle">可多选，选你心里最真实的原因</view>
+    <view class="step-options">
+      <view wx:for="{{motivations}}" wx:key="value"
+        class="step-option {{selectedMotivations[item.value] ? 'selected' : ''}}"
+        data-value="{{item.value}}" bindtap="toggleMotivation">
+        <text class="so-emoji">{{item.emoji}}</text>
+        <text class="so-label" style="flex:1">{{item.label}}</text>
+        <text wx:if="{{selectedMotivations[item.value]}}" class="so-check">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ═══ Step 3: Self-Efficacy 1-10 ═══ -->
+  <view wx:if="{{step === 3}}" class="step-content">
+    <view class="step-title">有多大信心坚持下去？</view>
+    <view class="step-subtitle">1 = 完全没信心，10 = 非常有信心</view>
+    <view class="efficacy-scale">
+      <view wx:for="{{efficacyLevels}}" wx:key="value" wx:for-item="lv"
+        class="eff-num {{selfEfficacy === lv.value ? 'active' : ''}} {{selfEfficacy > lv.value ? 'filled' : ''}}"
+        data-value="{{lv.value}}" bindtap="selectEfficacy">
+        <text class="eff-val">{{lv.value}}</text>
+        <text wx:if="{{lv.label}}" class="eff-label">{{lv.label}}</text>
+      </view>
+    </view>
+    <view wx:if="{{selfEfficacy > 0}}" class="efficacy-feedback">
+      <text wx:if="{{selfEfficacy <= 3}}">没问题，我们从最小的目标开始，一步步来 💚</text>
+      <text wx:elif="{{selfEfficacy <= 6}}">不错！适中的信心是最好的起点 🎯</text>
+      <text wx:elif="{{selfEfficacy <= 8}}">很有信心！那我们就按标准来，你自己感觉能行就加量 🔥</text>
+      <text wx:else>非常有信心！记得——偶尔没完成也别否定自己，持续比完美重要 🌟</text>
+    </view>
+  </view>
+
+  <!-- ═══ Step 4: Implementation Intention ═══ -->
+  <view wx:if="{{step === 4}}" class="step-content">
+    <view class="step-title">你打算什么时间练？</view>
+    <view class="step-subtitle">选最接近的，不确定也没关系</view>
+    <view class="step-options">
+      <view wx:for="{{implIntents}}" wx:key="value" class="step-option {{implIntent === item.value ? 'selected' : ''}}"
+        data-value="{{item.value}}" bindtap="selectImplIntent">
+        <text class="so-emoji">{{item.emoji}}</text>
+        <view class="so-row">
+          <text class="so-label">{{item.label}}</text>
+          <text class="so-desc">{{item.desc}}</text>
+        </view>
+        <text wx:if="{{implIntent === item.value}}" class="so-check">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ═══ Step 5: Equipment ═══ -->
+  <view wx:if="{{step === 5}}" class="step-content">
+    <view class="step-title">你有什么训练器械？</view>
+    <view class="step-subtitle">可多选，没有器械也没关系</view>
+    <view class="step-options">
+      <view wx:for="{{equipmentOptions}}" wx:key="value"
+        class="step-option {{selectedEquip[item.value] ? 'selected' : ''}}"
+        data-value="{{item.value}}" bindtap="toggleEquipment">
+        <text class="so-emoji">{{item.emoji}}</text>
+        <text class="so-label" style="flex:1">{{item.label}}</text>
+        <text wx:if="{{selectedEquip[item.value]}}" class="so-check">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ═══ Step 6: Frequency + Time ═══ -->
+  <view wx:if="{{step === 6}}" class="step-content">
+    <view class="step-title">每周练几天？每次多久？</view>
+    <view class="step-section-label">每周频率</view>
+    <view class="step-options">
+      <view wx:for="{{frequencies}}" wx:key="value" class="step-option {{frequency === item.value ? 'selected' : ''}}"
+        data-value="{{item.value}}" bindtap="selectFrequency">
+        <view class="so-row">
+          <text class="so-label">{{item.label}}</text>
+          <text class="so-desc">{{item.desc}}</text>
+        </view>
+        <text wx:if="{{frequency === item.value}}" class="so-check">✓</text>
+      </view>
+    </view>
+    <view class="step-section-label" style="margin-top: 32rpx;">每次时长</view>
+    <view class="step-options">
+      <view wx:for="{{times}}" wx:key="value" class="step-option {{timePerSession === item.value ? 'selected' : ''}}"
+        data-value="{{item.value}}" bindtap="selectTime">
+        <view class="so-row">
+          <text class="so-label">{{item.label}}</text>
+          <text class="so-desc">{{item.desc}}</text>
+        </view>
+        <text wx:if="{{timePerSession === item.value}}" class="so-check">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ═══ Step 7: Goal + Pain Point ═══ -->
+  <view wx:if="{{step === 7}}" class="step-content">
+    <view class="step-title">最后一步：目标和困扰</view>
+    <view class="step-section-label">你的目标</view>
+    <view class="step-options">
+      <view wx:for="{{goals}}" wx:key="*this" class="step-option {{goal === item ? 'selected' : ''}}"
+        data-value="{{item}}" bindtap="selectGoal">
+        <text class="so-label">{{item}}</text>
+        <text wx:if="{{goal === item}}" class="so-check">✓</text>
+      </view>
+    </view>
+    <view class="step-section-label" style="margin-top: 32rpx;">最大的困扰</view>
+    <view class="step-options">
+      <view wx:for="{{painPoints}}" wx:key="value" class="step-option {{painPoint === item.value ? 'selected' : ''}}"
+        data-value="{{item.value}}" bindtap="selectPainPoint">
+        <view class="so-row">
+          <text class="so-label">{{item.label}}</text>
+          <text class="so-desc">{{item.desc}}</text>
+        </view>
+        <text wx:if="{{painPoint === item.value}}" class="so-check">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ═══ Result: Generating / Preview ═══ -->
+  <view wx:if="{{step > totalSteps}}" class="step-content">
+    <view wx:if="{{generating}}" class="generating">
+      <view class="gen-title">正在根据你的情况定制专属计划...</view>
+      <view class="gen-dots">
+        <view class="gen-dot"></view><view class="gen-dot"></view><view class="gen-dot"></view>
+      </view>
+    </view>
+
+    <view wx:if="{{!generating && planData}}" class="plan-preview">
+      <view class="pp-summary">
+        <text class="pps-name">{{planData.goal}}·7天训练计划</text>
+        <text class="pps-meta">每周 {{planData.frequency || '--'}} 天 · {{planData.goal || ''}}</text>
+        <text wx:if="{{planData.explanation}}" class="pps-explain">{{planData.explanation}}</text>
+      </view>
+
+      <view class="pp-days-label">7 天训练安排</view>
+      <view class="preview-days">
+        <view wx:for="{{planData.days}}" wx:key="day" wx:for-item="day" class="preview-day {{day.is_rest ? 'rest' : ''}}"
+          data-index="{{index}}" bindtap="toggleDay">
+          <view class="pd-head">
+            <text class="pd-name">{{day.day_name}}</text>
+            <text wx:if="{{!day.is_rest}}" class="pd-focus">{{day.focus || '训练'}}</text>
+            <text wx:if="{{day.is_rest}}" class="pd-rest">休息</text>
+            <text wx:if="{{day.total_time}}" class="pd-time">{{day.total_time}}</text>
+            <text class="pd-arrow {{expandedDay === index ? 'open' : ''}}">▾</text>
+          </view>
+          <view wx:if="{{expandedDay === index && !day.is_rest}}" class="pd-detail">
+            <view wx:if="{{day.warmup && day.warmup.length > 0}}" class="pd-section">
+              <text class="pds-label">🔥 热身</text>
+              <view wx:for="{{day.warmup}}" wx:key="name" wx:for-item="w" class="pds-item">
+                <text class="pdsi-name">{{w.name}}</text><text class="pdsi-meta">{{w.duration || ''}}</text>
+              </view>
+            </view>
+            <view wx:if="{{day.main && day.main.length > 0}}" class="pd-section">
+              <text class="pds-label">💪 正式训练</text>
+              <view wx:for="{{day.main}}" wx:key="name" wx:for-item="ex" class="pds-item">
+                <view class="pdsi-left">
+                  <text class="pdsi-name">{{ex.name}}</text>
+                  <text wx:if="{{ex.tip}}" class="pdsi-tip">{{ex.tip}}</text>
+                </view>
+                <text class="pdsi-meta">{{ex.sets}}组 × {{ex.reps}}</text>
+              </view>
+            </view>
+            <view wx:if="{{day.cooldown && day.cooldown.length > 0}}" class="pd-section">
+              <text class="pds-label">🧘 拉伸放松</text>
+              <view wx:for="{{day.cooldown}}" wx:key="name" wx:for-item="c" class="pds-item">
+                <text class="pdsi-name">{{c.name}}</text><text class="pdsi-meta">{{c.duration || ''}}</text>
+              </view>
+            </view>
+            <text wx:if="{{day.tip}}" class="pd-day-tip">💡 {{day.tip}}</text>
+          </view>
+          <view wx:if="{{expandedDay === index && day.is_rest}}" class="pd-rest-detail">
+            <text class="pd-rest-text">{{day.tip || '好好休息，让身体充分恢复'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{planData.future_projection}}" class="pp-future">
+        <text class="ppf-label">坚持 7 天后</text>
+        <text class="ppf-text">{{planData.future_projection}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Bottom bar -->
+  <view wx:if="{{step <= totalSteps}}" class="bottom-bar">
+    <view wx:if="{{step > 1}}" class="bb-back" bindtap="prevStep">
+      <text class="bb-back-label">← 上一步</text>
+    </view>
+    <button class="bb-next {{(step === 1 && !ttmStage) || (step === 2 && !hasMotivation) || (step === 3 && !selfEfficacy) || (step === 4 && !implIntent) || (step === 5 && !hasEquipment) || (step === 6 && (!frequency || !timePerSession)) || (step === 7 && (!goal || !painPoint)) ? 'disabled' : ''}}"
+      bindtap="nextStep">
+      {{step === totalSteps ? '生成计划' : '下一步'}}
+    </button>
+  </view>
+
+  <view wx:if="{{step > totalSteps && !generating && planData && !planConfirmed}}" class="bottom-bar">
+    <button class="bb-confirm-btn" bindtap="confirmPlan">确认计划，开始训练</button>
+    <text class="bb-adjust-link" bindtap="adjustWithAI">让 AI 教练调整一下</text>
+  </view>
+  <view wx:if="{{planConfirmed}}" class="bottom-bar">
+    <view class="bb-done"><text class="bb-done-label">计划已生效，跳转到训练计划页...</text></view>
+  </view>
+
+</view>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-ver="19.0">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script>(function(){var ua=navigator.userAgent;if(/iPhone|iPad|iPod/.test(ua)&&/Safari/.test(ua)&&!/CriOS/.test(ua)&&!/MicroMessenger/.test(ua)&&!/QQ\//.test(ua)){document.documentElement.setAttribute('data-browser','safari');}})()</script>
+<title>FitAI — 智能运动健康助手</title>
+<link rel="stylesheet" href="/style.css?v=8">
+<link rel="stylesheet" href="/style-mobile.css?v=6" media="screen and (max-width: 768px)">
+<script>(function(){var v=window.innerHeight*0.01;document.documentElement.style.setProperty('--vh',v+'px');})()</script>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#3dd68c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FitAI">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<script>(function(){function s(){var v=window.visualViewport?window.visualViewport.height:window.innerHeight;document.documentElement.style.setProperty('--vh',(v*0.01)+'px');}s();window.addEventListener('resize',s);window.addEventListener('orientationchange',function(){setTimeout(s,100);});if(window.visualViewport){window.visualViewport.addEventListener('resize',s);window.visualViewport.addEventListener('scroll',s);}})();</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</head>
+<body>
+
+<div id="splash-screen">
+  <div class="splash-content">
+    <div class="splash-icon">💪</div>
+    <div class="splash-title">FitAI</div>
+    <div class="splash-sub">智能运动健康助手</div>
+  </div>
+</div>
+
+<div class="floating-orb orb-1"></div>
+<div class="floating-orb orb-2"></div>
+<div class="floating-orb orb-3"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-icon" data-icon="dumbbell-icon" data-size="26"></span>
+    <div class="brand-info">
+      <span class="brand-text">FitAI</span>
+      <span class="brand-sub" id="brand-sub">智能健身助手</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <button class="nav-btn active" data-panel="home"><span class="nav-icon" data-icon="home"></span><span>首页</span></button>
+    <button class="nav-btn" data-panel="chat"><span class="nav-icon" data-icon="message-circle"></span><span>对话助手</span></button>
+    <button class="nav-btn" data-panel="plan"><span class="nav-icon" data-icon="calendar"></span><span>训练计划</span></button>
+    <button class="nav-btn" data-panel="pose"><span class="nav-icon" data-icon="camera"></span><span>动作纠正</span></button>
+    <button class="nav-btn" data-panel="dashboard"><span class="nav-icon" data-icon="bar-chart3"></span><span>数据仪表盘</span></button>
+    <button class="nav-btn" data-panel="history"><span class="nav-icon" data-icon="list-checks"></span><span>历史记录</span></button>
+    <button class="nav-btn" data-panel="health"><span class="nav-icon" data-icon="heart-pulse"></span><span>健康数据</span></button>
+    <button class="nav-btn" data-panel="exercises"><span class="nav-icon" data-icon="activity"></span><span>运动分析</span></button>
+    <button class="nav-btn" data-panel="exercise-library"><span class="nav-icon" data-icon="dumbbell-icon"></span><span>动作库</span></button>
+    <button class="nav-btn" data-panel="insights"><span class="nav-icon" data-icon="lightbulb-icon"></span><span>洞察</span></button>
+    <button class="nav-btn" data-panel="settings"><span class="nav-icon" data-icon="settings"></span><span>设置</span></button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="quick-stats" id="quick-stats">
+      <div class="stat-mini"><div class="stat-mini-val">--</div><div class="stat-mini-label">本周训练</div></div>
+      <div class="stat-mini"><div class="stat-mini-val">--</div><div class="stat-mini-label">最新体重</div></div>
+    </div>
+    <div class="connection-status" id="connection-status"><span class="status-dot"></span><span>正在连接...</span></div>
+    <div class="history-section" style="padding:8px;border-top:1px solid var(--border);margin-top:4px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:4px">📝 历史对话</div>
+      <div id="sidebar-sessions" style="max-height:200px;overflow-y:auto"></div>
+    </div>
+  </div>
+</aside>
+
+<main class="main-content">
+  <section id="panel-home" class="panel active">
+    <div class="home-hero">
+      <div class="home-greeting"><h2 id="home-greeting">早上好 ☀️</h2><p id="home-date"></p></div>
+      <!-- V19: Hero status bar -->
+      <div class="home-hero-status" id="home-hero-status" style="display:none">
+        <div class="hero-status-text" id="hero-status-text"></div>
+        <button class="hero-cta-btn" id="hero-cta-btn" style="display:none"></button>
+      </div>
+      <div class="home-rings-row mini" id="home-rings">
+        <div class="ring-mini" onclick="ringClick('steps','步数','👣','#5e9eff','步','bar')"><div class="ring-mini-canvas"><canvas id="ring-steps" width="80" height="80"></canvas><div class="ring-mini-val" id="ring-steps-val">--</div></div><div class="ring-mini-label">步数</div></div>
+        <div class="ring-mini" onclick="ringClick('calories','卡路里','🔥','#f59e4b','千卡','bar')"><div class="ring-mini-canvas"><canvas id="ring-calories" width="80" height="80"></canvas><div class="ring-mini-val" id="ring-cal-val">--</div></div><div class="ring-mini-label">卡路里</div></div>
+        <div class="ring-mini" onclick="ringClick('sleep','睡眠','😴','#8a2be2','分钟','bar')"><div class="ring-mini-canvas"><canvas id="ring-sleep" width="80" height="80"></canvas><div class="ring-mini-val" id="ring-sleep-val">--</div></div><div class="ring-mini-label">睡眠</div></div>
+      </div>
+    </div>
+    <div class="home-record-section">
+      <div class="section-title" style="padding:0;margin-top:0;margin-bottom:12px">✏️ 快速记录</div>
+      <div class="home-record-row">
+        <div class="record-card"><div class="record-card-header">😴 睡眠时长</div><div class="record-input-row"><input type="number" id="input-sleep" class="record-input" placeholder="小时" min="0" max="24" step="0.5" autocomplete="off" value=""><span class="record-unit">小时</span></div><button class="record-btn" onclick="recordHealth('sleep','input-sleep','分钟',60)">记录</button><div class="record-msg" id="msg-sleep"></div></div>
+        <div class="record-card"><div class="record-card-header">⚖️ 体重</div><div class="record-input-row"><input type="number" id="quick-weight" name="quick-weight" class="record-input" placeholder="kg" min="30" max="300" step="0.1" autocomplete="off" value=""><span class="record-unit">kg</span></div><button class="record-btn" onclick="recordHealth('weight','quick-weight','kg',1)">记录</button><div class="record-msg" id="msg-weight"></div></div>
+        <div class="record-card"><div class="record-card-header">💧 喝水</div><div class="water-display" id="water-today">今日: -- 杯</div><button class="record-btn water-btn" onclick="recordWater()">➕ 喝一杯 (250ml)</button><div class="record-msg" id="msg-water"></div></div>
+      </div>
+    </div>
+    <div class="home-quick-cards" id="home-quick-cards">
+      <div class="home-recommend-card accent-green" id="home-card-recommend" onclick="document.querySelector('.nav-btn[data-panel=chat]').click()"><div class="rec-icon">🤖</div><div class="rec-content"><div class="rec-title">今日推荐训练</div><div class="rec-desc" id="rec-desc">加载中...</div></div><div class="home-card-arrow">→</div></div>
+      <div class="home-recommend-card accent-blue" id="home-card-weekly" onclick="document.querySelector('.nav-btn[data-panel=dashboard]').click()"><div class="rec-icon">📊</div><div class="rec-content"><div class="rec-title">本周训练统计</div><div class="rec-desc" id="rec-weekly">加载中...</div></div><div class="home-card-arrow">→</div></div>
+      <div class="home-recommend-card accent-orange" id="home-card-trend" onclick="document.querySelector('.nav-btn[data-panel=health]').click()"><div class="rec-icon">📈</div><div class="rec-content"><div class="rec-title">体重变化趋势</div><div class="rec-desc" id="rec-trend">加载中...</div></div><div class="home-card-arrow">→</div></div>
+    </div>
+
+    <div class="section-title" style="padding:0;margin-top:24px;margin-bottom:10px">📊 本周摘要</div>
+    <div class="weekly-summary" id="weekly-summary">
+      <span style="color:var(--text3)">加载中...</span>
+    </div>
+  </section>
+
+  <section id="panel-chat" class="panel">
+    <div class="chat-header"><h2>智能健身助手</h2><p>记录训练 · 追踪进步 · 获取个性化建议</p></div>
+    <div class="chat-body" id="chat-messages">
+      <div class="welcome-msg"><div class="welcome-icon">🏋️</div><h3>欢迎使用 FitAI 健身助手</h3><p>你可以直接告诉我你的训练、饮食或身体数据，我会帮你记录并提供建议。</p>
+        <div class="quick-actions">
+          <button class="quick-btn" onclick="quickSend('我今天该做什么训练？')">📅 今天练什么？</button>
+          <button class="quick-btn" onclick="quickSend('帮我分析最近的训练情况')">📈 分析训练情况</button>
+          <button class="quick-btn" onclick="quickSend('我今天吃了什么什么')">🍽️ 记录饮食</button>
+          <button class="quick-btn" onclick="quickSend('记录今天的体重')">⚖️ 记录体重</button>
+          <button class="quick-btn" onclick="quickSend('推荐卧推的教学视频')">🎬 动作教学视频</button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-footer">
+      <div class="voice-bar">
+        <button id="call-btn" class="voice-btn" title="打电话模式"><span data-icon="phone"></span></button>
+        <button id="mic-btn" class="voice-btn" title="语音输入"><span data-icon="mic"></span></button>
+        <button id="speaker-btn" class="voice-btn" title="朗读回复"><span data-icon="volume2"></span></button>
+        <button id="camera-chat-btn" class="voice-btn" title="拍照识别食物"><span data-icon="camera"></span></button>
+      </div>
+      <div class="chat-input-wrap">
+        <textarea id="chat-input" rows="1" placeholder="输入你的训练、饮食或问题...（Enter 发送，Shift+Enter 换行）"></textarea>
+        <button id="send-btn" title="发送"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9 22 2z"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-plan" class="panel">
+    <div class="panel-header"><h2>训练计划</h2></div>
+    <div id="plan-content" style="padding:8px 0"></div>
+  </section>
+
+  <section id="panel-pose" class="panel">
+    <div class="panel-header"><h2>动作纠正</h2><button class="btn btn-outline btn-sm" onclick="import('./js/pose.js').then(function(m){m.toggleSpeech()})" id="pose-speech-btn">🔊</button></div>
+    <div class="pose-exercise-selector" id="pose-exercise-selector">
+      <button class="ex-btn active" data-ex="squat" onclick="import('./js/pose.js').then(function(m){m.switchExercise('squat')})">深蹲</button>
+      <button class="ex-btn" data-ex="pushup" onclick="import('./js/pose.js').then(function(m){m.switchExercise('pushup')})">俯卧撑</button>
+      <button class="ex-btn" data-ex="plank" onclick="import('./js/pose.js').then(function(m){m.switchExercise('plank')})">平板支撑</button>
+      <button class="ex-btn" data-ex="lunge" onclick="import('./js/pose.js').then(function(m){m.switchExercise('lunge')})">箭步蹲</button>
+      <button class="ex-btn" data-ex="ytw" onclick="import('./js/pose.js').then(function(m){m.switchExercise('ytw')})">肩部 YTW</button>
+    </div>
+    <div class="pose-container">
+      <div class="pose-video-wrap">
+        <video id="pose-video" autoplay playsinline muted></video>
+        <canvas id="pose-canvas" width="480" height="360"></canvas>
+        <div class="pose-overlay-top">
+          <span class="pose-rep-badge" id="pose-rep-count">0</span>
+          <span class="pose-rep-label">reps</span>
+        </div>
+        <div class="pose-fatigue-bar" id="pose-fatigue-bar" style="display:none"></div>
+        <div class="pose-cue" id="pose-cue">点击开始</div>
+      </div>
+      <div class="pose-indicators" id="pose-indicators">
+        <div class="pi-row"><span class="pi-label">膝角</span><span class="pi-val">--°</span></div>
+        <div class="pi-row"><span class="pi-label">髋角</span><span class="pi-val">--°</span></div>
+        <div class="pi-row"><span class="pi-label">背角</span><span class="pi-val">--°</span></div>
+        <div class="pi-row"><span class="pi-label">膝距</span><span class="pi-val">--</span></div>
+      </div>
+    </div>
+    <div class="pose-actions" style="text-align:center;margin-top:16px">
+      <button class="btn btn-primary" id="pose-start-btn" onclick="import('./js/pose.js').then(function(m){m.startPoseSession()})">开始深蹲检测</button>
+      <button class="btn btn-outline" id="pose-stop-btn" onclick="import('./js/pose.js').then(function(m){m.stopPoseSession()})" style="display:none">停止</button>
+      <button class="btn btn-outline btn-sm" onclick="import('./js/pose.js').then(function(m){m.resetReps()})">重置计数</button>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text3);margin-top:8px">将手机靠在墙上或架子上，退后2-3步，确保全身在画面中</p>
+  </section>
+
+  <section id="panel-dashboard" class="panel">
+    <div class="panel-header"><h2>数据仪表盘</h2><div class="period-selector"><button class="period-btn active" data-days="7">7天</button><button class="period-btn" data-days="30">30天</button><button class="period-btn" data-days="90">90天</button></div></div>
+    <div class="dash-grid">
+      <div class="stat-card"><div class="stat-card-icon">🔥</div><div class="stat-card-info"><div class="stat-card-val" id="stat-streak">0</div><div class="stat-card-label">连续训练天数</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon">🏋️</div><div class="stat-card-info"><div class="stat-card-val" id="stat-workouts">0</div><div class="stat-card-label">训练次数</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon">⚖️</div><div class="stat-card-info"><div class="stat-card-val" id="stat-weight">--</div><div class="stat-card-label">最新体重 (kg)</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon">📏</div><div class="stat-card-info"><div class="stat-card-val" id="stat-bodyfat">--</div><div class="stat-card-label">最新体脂率 (%)</div></div></div>
+    </div>
+    <div class="section-title">🏆 成就徽章</div><div class="achievements-row" id="achievements-row"></div>
+    <div class="section-title">📋 训练动作统计</div><div class="exercise-stats" id="exercise-stats"></div>
+    <div class="section-title">🎬 B站教学视频</div><div class="video-grid" id="video-grid"><div class="empty-state"><div class="empty-icon">🎬</div><p>加载中...</p></div></div>
+    <div class="charts-row">
+      <div class="chart-card"><h3>体重变化趋势</h3><div class="chart-wrap"><canvas id="chart-weight"></canvas></div></div>
+      <div class="chart-card"><h3>训练频率分布</h3><div class="chart-wrap"><canvas id="chart-workout"></canvas></div></div>
+    </div>
+    <div class="insight-card" id="whatif-card" style="display:none">
+      <div class="insight-header">🔮 因果洞察 · 如果…会怎样？<button class="btn btn-sm" id="whatif-compare-btn" style="float:right;font-size:0.75rem">📊 对比</button></div>
+      <div class="insight-body" id="whatif-body">
+        <div class="whatif-row" id="whatif-scenario-a">
+          <span style="font-size:0.8rem;color:var(--text3)">A:</span>
+          <select id="whatif-metric"><option value="sleep">睡眠</option><option value="steps">步数</option></select>
+          <input type="range" id="whatif-slider" min="60" max="600" value="420" step="10">
+          <span id="whatif-value">420分钟</span>
+          <button class="btn btn-primary btn-sm" id="whatif-btn">🔮 推演</button>
+        </div>
+        <div class="whatif-row" id="whatif-scenario-b" style="display:none;margin-top:6px">
+          <span style="font-size:0.8rem;color:var(--text3)">B:</span>
+          <select id="whatif-metric-b"><option value="sleep">睡眠</option><option value="steps">步数</option></select>
+          <input type="range" id="whatif-slider-b" min="60" max="600" value="480" step="10">
+          <span id="whatif-value-b">480分钟</span>
+        </div>
+        <div class="whatif-results" id="whatif-results"></div>
+        <div class="whatif-results" id="whatif-results-b" style="margin-top:6px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- V18.1: 冷启动引导（含欢迎页） -->
+  <div id="onboarding-overlay" class="onboarding-overlay" style="display:none">
+    <div class="onboarding-card" id="ob-card">
+      <div class="ob-steps-indicator" id="ob-steps-indicator"></div>
+      <!-- Step 1: Welcome -->
+      <div class="onboarding-step" id="ob-step-1">
+        <div class="ob-icon">📋</div>
+        <h2>Hi，我是 FitAI</h2>
+        <p style="margin-bottom:12px;line-height:1.6">你的智能运动健康教练。<br>基于因果推理和贝叶斯模型，帮你理解身体、定制专属训练计划。</p>
+        <p style="font-size:13px;color:var(--text3);margin-bottom:20px">3 个简单问题，马上得到 7 天可执行方案</p>
+        <div class="ob-buttons"><button class="btn btn-primary" onclick="window._obShowStep(2)">🚀 开始</button></div>
+      </div>
+      <!-- Step 2: Goal -->
+      <div class="onboarding-step" id="ob-step-2" style="display:none">
+        <div class="ob-icon">🎯</div>
+        <h2>你的目标是什么？</h2>
+        <p style="margin-bottom:20px">选一个，马上就能改</p>
+        <div class="ob-goal-btns" id="ob-goal-btns">
+          <button class="ob-goal-btn" data-goal="减脂">🏃<span>减脂</span></button>
+          <button class="ob-goal-btn" data-goal="增肌">💪<span>增肌</span></button>
+          <button class="ob-goal-btn" data-goal="更健康">❤️<span>更健康</span></button>
+          <button class="ob-goal-btn" data-goal="缓解疼痛">🩹<span>缓解疼痛</span></button>
+        </div>
+        <div class="ob-buttons"><button class="btn btn-primary" id="ob-next-2" disabled onclick="window._obShowStep(3)">下一步 →</button></div>
+      </div>
+      <!-- Step 3: Frequency -->
+      <div class="onboarding-step" id="ob-step-3" style="display:none">
+        <div class="ob-icon">📅</div>
+        <h2>每周能锻炼几天？</h2>
+        <p style="margin-bottom:20px">诚实回答，我们会据此安排</p>
+        <div class="ob-freq-btns" id="ob-freq-btns">
+          <button class="ob-freq-btn" data-freq="2">1-2 天<span>轻松起步</span></button>
+          <button class="ob-freq-btn" data-freq="3">3-4 天<span>规律训练</span></button>
+          <button class="ob-freq-btn" data-freq="5">5 天以上<span>全力以赴</span></button>
+        </div>
+        <div class="ob-buttons"><button class="btn btn-primary" id="ob-next-3" disabled onclick="window._obShowStep(4)">下一步 →</button></div>
+      </div>
+      <!-- Step 4: Pain Point -->
+      <div class="onboarding-step" id="ob-step-4" style="display:none">
+        <div class="ob-icon">💬</div>
+        <h2>最困扰你的是什么？</h2>
+        <p style="margin-bottom:20px">告诉我们，你的计划会不一样</p>
+        <div class="ob-pain-btns" id="ob-pain-btns">
+          <button class="ob-pain-btn" data-pain="不知道练什么">🤔<span>不知道练什么</span></button>
+          <button class="ob-pain-btn" data-pain="怕受伤">😰<span>怕受伤</span></button>
+          <button class="ob-pain-btn" data-pain="没动力">😴<span>没动力</span></button>
+          <button class="ob-pain-btn" data-pain="没效果">📉<span>没效果</span></button>
+        </div>
+        <div class="ob-buttons"><button class="btn btn-primary" id="ob-next-4" disabled onclick="window._obGeneratePlan()">✨ 生成我的专属计划</button></div>
+      </div>
+      <!-- Step 5: Loading -->
+      <div class="onboarding-step" id="ob-step-5" style="display:none">
+        <div class="ob-icon" style="animation: pulse 1.5s ease-in-out infinite">⚙️</div>
+        <h2>正在为你定制专属计划...</h2>
+        <p>根据你的目标、频率和困扰，生成 7 天可执行训练方案</p>
+        <div class="ob-loading-bar"><div class="ob-loading-fill"></div></div>
+      </div>
+      <!-- Step 6: Plan Result -->
+      <div class="onboarding-step" id="ob-step-6" style="display:none">
+        <div class="ob-icon">✅</div>
+        <h2 id="ob-plan-title">你的专属 7 天计划</h2>
+        <p id="ob-plan-explain" style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5"></p>
+        <div class="ob-plan-scroll" id="ob-plan-scroll"></div>
+        <div class="ob-buttons" style="margin-top:16px"><button class="btn btn-primary" onclick="window._obFinish()">🚀 开始训练</button></div>
+      </div>
+    </div>
+  </div>
+
+  <section id="panel-history" class="panel">
+    <div class="panel-header"><h2>历史记录</h2></div>
+    <div class="history-subnav"><button class="subnav-btn active" data-type="workout">训练记录</button><button class="subnav-btn" data-type="metrics">体测数据</button><button class="subnav-btn" data-type="nutrition">饮食记录</button></div>
+    <div class="history-content" id="history-content"><div class="empty-state"><div class="empty-icon">📋</div><p>暂无记录</p></div></div>
+  </section>
+
+  <section id="panel-health" class="panel">
+    <div id="health-dashboard-content">
+      <div class="panel-header"><h2>健康数据</h2><div class="period-selector"><button class="period-btn active" data-days="7">7天</button><button class="period-btn" data-days="30">30天</button><button class="period-btn" data-days="90">90天</button></div><label class="ma-toggle"><input type="checkbox" id="ma-toggle" checked> 均线</label></div>
+      <div class="dash-grid" id="health-stat-grid">
+        <div class="stat-card health-stat-clickable" data-metric="steps" data-name="步数" data-icon="👣" data-color="#5e9eff" data-unit="步" data-chart-type="bar"><div class="stat-card-icon">👣</div><div class="stat-card-info"><div class="stat-card-val" id="stat-steps">--</div><div class="stat-card-label">今日步数</div></div></div>
+        <div class="stat-card health-stat-clickable" data-metric="heart_rate" data-name="心率" data-icon="❤️" data-color="#f87171" data-unit="bpm" data-chart-type="line"><div class="stat-card-icon">❤️</div><div class="stat-card-info"><div class="stat-card-val" id="stat-hr">--</div><div class="stat-card-label">平均心率 (bpm)</div></div></div>
+        <div class="stat-card health-stat-clickable" data-metric="sleep" data-name="睡眠" data-icon="😴" data-color="#8a2be2" data-unit="分钟" data-chart-type="bar"><div class="stat-card-icon">😴</div><div class="stat-card-info"><div class="stat-card-val" id="stat-sleep">--</div><div class="stat-card-label">昨夜睡眠 (分钟)</div></div></div>
+        <div class="stat-card health-stat-clickable" data-metric="calories" data-name="卡路里" data-icon="🔥" data-color="#f59e4b" data-unit="千卡" data-chart-type="bar"><div class="stat-card-icon">🔥</div><div class="stat-card-info"><div class="stat-card-val" id="stat-calories">--</div><div class="stat-card-label">今日消耗 (千卡)</div></div></div>
+        <div class="stat-card health-stat-clickable" data-metric="weight" data-name="体重" data-icon="⚖️" data-color="#3dd68c" data-unit="kg" data-chart-type="line"><div class="stat-card-icon">⚖️</div><div class="stat-card-info"><div class="stat-card-val" id="stat-weight-hc">--</div><div class="stat-card-label">体重 (kg)</div></div></div>
+        <div class="stat-card health-stat-clickable" data-metric="body_fat" data-name="体脂率" data-icon="📏" data-color="#f59e4b" data-unit="%" data-chart-type="line"><div class="stat-card-icon">📏</div><div class="stat-card-info"><div class="stat-card-val" id="stat-bodyfat-hc">--</div><div class="stat-card-label">体脂率 (%)</div></div></div>
+        <div class="stat-card health-stat-clickable" data-metric="blood_pressure_sys" data-name="血压" data-icon="🩸" data-color="#f87171" data-unit="mmHg" data-chart-type="line"><div class="stat-card-icon">🩸</div><div class="stat-card-info"><div class="stat-card-val" id="stat-bp">--</div><div class="stat-card-label">血压 收缩压 (mmHg)</div></div></div>
+        <div class="stat-card health-stat-clickable" data-metric="blood_glucose" data-name="血糖" data-icon="🩸" data-color="#e879f9" data-unit="mmol/L" data-chart-type="line"><div class="stat-card-icon">🩸</div><div class="stat-card-info"><div class="stat-card-val" id="stat-glucose">--</div><div class="stat-card-label">血糖 (mmol/L)</div></div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card health-chart-clickable" data-metric="steps" data-name="步数" data-icon="👣" data-color="#5e9eff" data-unit="步" data-chart-type="bar"><h3>每日步数趋势 <span class="chart-card-hint">点击查看详情 →</span></h3><div class="chart-wrap"><canvas id="chart-steps"></canvas></div></div>
+        <div class="chart-card health-chart-clickable" data-metric="heart_rate" data-name="心率" data-icon="❤️" data-color="#f87171" data-unit="bpm" data-chart-type="line"><h3>心率变化趋势 <span class="chart-card-hint">点击查看详情 →</span></h3><div class="chart-wrap"><canvas id="chart-heartrate"></canvas></div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card health-chart-clickable" data-metric="sleep" data-name="睡眠" data-icon="😴" data-color="#8a2be2" data-unit="分钟" data-chart-type="bar"><h3>睡眠时长 <span class="chart-card-hint">点击查看详情 →</span></h3><div class="chart-wrap"><canvas id="chart-sleep"></canvas></div></div>
+        <div class="chart-card health-chart-clickable" data-metric="calories" data-name="卡路里" data-icon="🔥" data-color="#f59e4b" data-unit="千卡" data-chart-type="bar"><h3>卡路里消耗 <span class="chart-card-hint">点击查看详情 →</span></h3><div class="chart-wrap"><canvas id="chart-calories-burn"></canvas></div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card"><h3>体重变化</h3><div class="chart-wrap"><canvas id="chart-weight-hc"></canvas></div></div>
+        <div class="chart-card"><h3>体脂率趋势</h3><div class="chart-wrap"><canvas id="chart-bodyfat"></canvas></div></div>
+      </div>
+      <div class="section-title">📈 周报趋势</div>
+      <div class="analysis-row">
+        <div class="analysis-card"><h4>📊 多指标趋势</h4><div class="chart-wrap-sm"><canvas id="chart-trend"></canvas></div></div>
+        <div class="analysis-card"><h4>📋 本周概况</h4>
+          <div class="summary-list">
+            <div class="summary-item"><span>日均步数</span><span id="sum-avg-steps">--</span></div>
+            <div class="summary-item"><span>平均心率</span><span id="sum-avg-hr">--</span></div>
+            <div class="summary-item"><span>平均睡眠</span><span id="sum-avg-sleep">--</span></div>
+            <div class="summary-item"><span>步数趋势</span><span id="sum-trend-steps">--</span></div>
+            <div class="summary-item"><span>心率趋势</span><span id="sum-trend-hr">--</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="section-title">📈 数据分析</div>
+      <div style="padding:0 28px;margin-bottom:16px"><button class="quick-btn" id="ai-analysis-btn" onclick="triggerAIRecommend()">🤖 AI 推荐专属训练计划</button></div>
+      <div class="section-title">🔗 已连接设备</div><div class="platform-connections" id="platform-connections"></div>
+      <div class="sync-status"><span id="last-sync-text">最后同步: --</span><button class="quick-btn" id="sync-now-btn">🔄 立即同步</button></div>
+    </div>
+
+    <!-- 健康数据详情钻取视图 -->
+    <div id="health-detail" style="display:none;">
+      <div class="detail-header">
+        <button class="detail-back-btn" onclick="closeHealthDetail()">← 返回</button>
+        <div class="detail-title"><span class="detail-icon" id="detail-icon"></span><h2 id="detail-title"></h2></div>
+        <div class="period-selector" id="detail-period-selector">
+          <button class="period-btn active" data-days="7">7天</button>
+          <button class="period-btn" data-days="30">30天</button>
+          <button class="period-btn" data-days="90">90天</button>
+        </div>
+      </div>
+      <div class="detail-stats-row" id="detail-stats"></div>
+      <div class="detail-chart-card"><div class="detail-chart-wrap"><canvas id="chart-health-detail"></canvas></div></div>
+      <div class="detail-table-card">
+        <h3>数据明细</h3>
+        <div class="detail-table-wrap">
+          <table id="detail-table"><thead><tr><th>日期</th><th>数值</th><th>单位</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-exercises" class="panel">
+    <div class="panel-header"><h2>运动分析</h2></div>
+    <div class="dash-grid">
+      <div class="stat-card"><div class="stat-card-icon">🏃</div><div class="stat-card-info"><div class="stat-card-val" id="ex-total-workouts">--</div><div class="stat-card-label">总运动次数</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon">⏱️</div><div class="stat-card-info"><div class="stat-card-val" id="ex-total-minutes">--</div><div class="stat-card-label">总运动时长 (分钟)</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon">🔥</div><div class="stat-card-info"><div class="stat-card-val" id="ex-total-calories">--</div><div class="stat-card-label">总消耗 (千卡)</div></div></div>
+      <div class="stat-card"><div class="stat-card-icon">🎯</div><div class="stat-card-info"><div class="stat-card-val" id="ex-type-count">--</div><div class="stat-card-label">运动种类</div></div></div>
+    </div>
+    <div class="charts-row"><div class="chart-card"><h3>运动频率分布</h3><div class="chart-wrap"><canvas id="chart-exercise-freq"></canvas></div></div><div class="chart-card"><h3>月度运动趋势</h3><div class="chart-wrap"><canvas id="chart-exercise-monthly"></canvas></div></div></div>
+    <div class="charts-row"><div class="chart-card"><h3>月度卡路里消耗</h3><div class="chart-wrap"><canvas id="chart-exercise-calories"></canvas></div></div><div class="chart-card"><h3>运动类型分布</h3><div class="chart-wrap"><canvas id="chart-exercise-pie"></canvas></div></div></div>
+    <div class="section-title">📋 运动类型排行</div><div class="ex-type-list" id="ex-type-list"></div>
+
+    <!-- 运动详情钻取视图 -->
+    <div id="ex-detail" style="display:none;">
+      <div class="ex-detail-header">
+        <button class="ex-detail-back" onclick="closeExDetail()">← 返回</button>
+        <h3 id="ex-detail-title"></h3>
+      </div>
+      <div class="dash-grid" id="ex-detail-summary"></div>
+      <div class="chart-card"><h3>月度趋势</h3><div class="chart-wrap"><canvas id="chart-ex-type-trend"></canvas></div></div>
+      <div class="ex-history-table-wrap">
+        <table class="ex-history-table" id="ex-history-table">
+          <thead><tr><th>日期</th><th>组数</th><th>次数</th><th>重量</th><th>时长</th><th>备注</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-exercise-library" class="panel">
+    <div class="panel-header"><h2>动作库</h2><span style="color:var(--text3);font-size:13px">1,324 个标准健身动作</span></div>
+    <div class="exlib-layout">
+      <div class="exlib-filters">
+        <div class="exlib-filter-section">
+          <input type="text" id="exlib-search" placeholder="搜索动作名..." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;margin-bottom:12px;outline:none">
+        </div>
+        <div class="exlib-filter-section">
+          <h4>身体部位</h4>
+          <div id="exlib-category-list">
+            <button class="exlib-filter-btn active" data-value="">全部</button>
+            <button class="exlib-filter-btn" data-value="chest">胸</button>
+            <button class="exlib-filter-btn" data-value="back">背</button>
+            <button class="exlib-filter-btn" data-value="shoulders">肩</button>
+            <button class="exlib-filter-btn" data-value="upper arms">手臂</button>
+            <button class="exlib-filter-btn" data-value="upper legs">大腿</button>
+            <button class="exlib-filter-btn" data-value="lower legs">小腿</button>
+            <button class="exlib-filter-btn" data-value="waist">腰腹</button>
+            <button class="exlib-filter-btn" data-value="cardio">心肺</button>
+          </div>
+        </div>
+        <div class="exlib-filter-section">
+          <h4>器材</h4>
+          <div id="exlib-equipment-list">
+            <button class="exlib-filter-btn active" data-value="">全部</button>
+            <button class="exlib-filter-btn" data-value="body weight">自重</button>
+            <button class="exlib-filter-btn" data-value="dumbbell">哑铃</button>
+            <button class="exlib-filter-btn" data-value="barbell">杠铃</button>
+            <button class="exlib-filter-btn" data-value="cable">绳索</button>
+            <button class="exlib-filter-btn" data-value="machine">器械</button>
+            <button class="exlib-filter-btn" data-value="band">弹力带</button>
+            <button class="exlib-filter-btn" data-value="kettlebell">壶铃</button>
+          </div>
+        </div>
+        <div class="exlib-filter-section">
+          <h4>难度</h4>
+          <div id="exlib-difficulty-list">
+            <button class="exlib-filter-btn active" data-value="">全部</button>
+            <button class="exlib-filter-btn" data-value="1">⭐ 极易</button>
+            <button class="exlib-filter-btn" data-value="2">⭐⭐ 简单</button>
+            <button class="exlib-filter-btn" data-value="3">⭐⭐⭐ 中等</button>
+            <button class="exlib-filter-btn" data-value="4">⭐⭐⭐⭐ 较难</button>
+            <button class="exlib-filter-btn" data-value="5">⭐⭐⭐⭐⭐ 高难</button>
+          </div>
+        </div>
+      </div>
+      <div class="exlib-grid" id="exlib-grid"></div>
+    </div>
+  </section>
+
+  <section id="panel-insights" class="panel">
+    <div class="panel-header"><h2>因果洞察</h2></div>
+    <div class="charts-row">
+      <div class="chart-card"><h3>🔗 因果关系图</h3><div class="chart-wrap"><div id="insights-causal-graph" style="padding:12px;color:var(--text3);font-size:13px">加载中...</div></div></div>
+      <div class="chart-card"><h3>📈 最佳干预推荐</h3><div class="chart-wrap"><div id="insights-interventions" style="padding:12px;color:var(--text3);font-size:13px">加载中...</div></div></div>
+    </div>
+    <div class="charts-row">
+      <div class="chart-card"><h3>⚠️ 生理变点</h3><div class="chart-wrap"><div id="insights-changepoints" style="padding:12px;color:var(--text3);font-size:13px">加载中...</div></div></div>
+      <div class="chart-card"><h3>🔮 预测趋势</h3><div class="chart-wrap"><div id="insights-predictions" style="padding:12px;color:var(--text3);font-size:13px">加载中...</div></div></div>
+    </div>
+  </section>
+
+  <section id="panel-settings" class="panel">
+    <div class="panel-header"><h2>设置</h2></div>
+    <div class="settings-section" style="text-align:center;padding-bottom:12px">
+      <button onclick="localStorage.removeItem('fitai-onboarded');location.reload()" style="padding:8px 20px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text2);cursor:pointer;font-size:13px">🔄 重新走一遍新手引导</button>
+    </div>
+    <div class="settings-section">
+      <h3>个人资料</h3>
+      <p style="color:var(--text3);font-size:12px;margin-bottom:14px">这些信息会告诉 FitAI 你的基本情况，让 AI 教练给出更个性化的建议</p>
+      <div class="profile-form" id="profile-form">
+        <div class="profile-row">
+          <div class="profile-field"><label>称呼</label><input id="profile-name" placeholder="你的名字或昵称"></div>
+          <div class="profile-field"><label>性别</label><select id="profile-gender"><option value="">请选择</option><option value="男">男</option><option value="女">女</option></select></div>
+          <div class="profile-field"><label>出生年份</label><input id="profile-birth" type="number" placeholder="如 1995" min="1940" max="2020"></div>
+        </div>
+        <div class="profile-row">
+          <div class="profile-field"><label>身高 (cm)</label><input id="profile-height" type="number" placeholder="如 175" min="100" max="250" step="0.1"></div>
+          <div class="profile-field"><label>体重 (kg)</label><input id="profile-weight" type="number" placeholder="如 70" min="30" max="300" step="0.1"></div>
+          <div class="profile-field"><label>活动水平</label><select id="profile-level"><option value="">请选择</option><option value="久坐少动">久坐少动</option><option value="轻度活动（每周1-2次）">轻度活动（每周1-2次）</option><option value="中度活动（每周3-5次）">中度活动（每周3-5次）</option><option value="高度活跃（每周6-7次）">高度活跃（每周6-7次）</option><option value="运动员级别">运动员级别</option></select></div>
+        </div>
+        <div class="profile-row"><div class="profile-field" style="flex:2"><label>健身目标</label><input id="profile-goal" placeholder="如：减脂到65kg、增肌、提升耐力、跑完半马..."></div></div>
+        <div class="profile-row"><div class="profile-field" style="flex:2"><label>备注（伤病、偏好等）</label><input id="profile-notes" placeholder="如：左膝旧伤、不喜欢跑步、素食..."></div></div>
+        <button class="save-profile-btn" id="save-profile-btn">保存个人资料</button>
+        <span id="profile-saved" style="display:none;color:var(--green);font-size:13px;margin-left:12px">已保存</span>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3>AI 模型</h3>
+      <p style="color:var(--text3);font-size:12px;margin-bottom:14px;line-height:1.6">切换 AI 引擎，实时生效无需重启。<br>Flash 快速响应适合日常对话，Pro 推理更深适合数据分析。</p>
+      <div class="model-switch" id="model-switch">
+        <div class="model-option" data-model="deepseek-v4-flash" onclick="switchModel('deepseek-v4-flash')"><div class="model-radio"></div><div class="model-info"><div class="model-name">Flash 快速</div><div class="model-desc">响应快，日常对话推荐</div></div></div>
+        <div class="model-option" data-model="deepseek-v4-pro" onclick="switchModel('deepseek-v4-pro')"><div class="model-radio"></div><div class="model-info"><div class="model-name">Pro 深度</div><div class="model-desc">推理更强，复杂分析场景</div></div></div>
+      </div>
+      <div id="model-status" style="margin-top:8px;font-size:12px;color:var(--green);display:none"></div>
+    </div>
+    <div class="settings-section">
+      <h3>💬 AI 回复风格</h3>
+      <div style="display:flex;gap:8px;margin-bottom:4px">
+        <button class="style-btn active" data-style="casual" onclick="setReplyStyle('casual')">💬 口语风</button>
+        <button class="style-btn" data-style="data" onclick="setReplyStyle('data')">📊 数据风</button>
+      </div>
+      <p style="color:var(--text3);font-size:11px">口语风：像朋友聊天讲故事 · 数据风：结构化精确分析</p>
+    </div>
+    <div class="settings-section">
+      <h3>🎨 界面主题</h3>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button onclick="setTheme('dark')" style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:#1a1a2e;color:#e0e0e0;cursor:pointer">🌙 深色</button>
+        <button onclick="setTheme('light')" style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:#fff;color:#222;cursor:pointer">☀️ 浅色</button>
+        <button onclick="setTheme('morning')" style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:#fef9ef;color:#78350f;cursor:pointer">🌅 暖色</button>
+      </div>
+
+      <h3>📥 数据导入</h3>
+      <p style="color:var(--text3);font-size:12px;margin-bottom:14px">上传健康数据文件，支持 Apple Health 导出、华为健康 CSV 等格式。</p>
+      <div class="import-area" id="import-area">
+        <div class="import-icon">📂</div>
+        <div class="import-text">点击或拖拽文件到这里</div>
+        <div class="import-hint">支持 CSV / JSON / XML / ZIP 格式</div>
+      </div>
+      <input type="file" id="import-file-input" accept=".csv,.json,.xml,.zip,.txt" onchange="handleFileSelect(event)" style="display:none">
+      <div id="import-result" style="margin-top:8px;font-size:12px"></div>
+
+      <h3>账号管理</h3>
+      <p style="color:var(--text3);font-size:12px;margin-bottom:14px;line-height:1.6">管理员可在此管理用户注册开关。</p>
+      <div id="admin-panel" style="display:none;padding:12px;background:rgba(79,172,254,0.05);border:1px solid rgba(79,172,254,0.2);border-radius:8px;margin-bottom:12px">
+        <div style="font-weight:600;color:#4facfe;margin-bottom:8px">🔧 管理员面板</div>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:12px">
+          <input type="checkbox" id="registration-toggle" onchange="toggleRegistration(this.checked)">
+          <span>允许新用户注册</span>
+        </label>
+        <div id="user-list"></div>
+      </div>
+      <button class="quick-btn" onclick="logout()" style="margin-top:12px;background:rgba(255,107,122,0.15);color:#ff6b7a;width:100%">🚪 退出登录</button>
+    </div>
+  </section>
+</main>
+
+<div id="call-overlay" style="display:none">
+  <div class="call-bg">
+    <div class="call-pulse"></div>
+    <div class="call-status" id="call-status">正在听...</div>
+    <div class="call-transcript" id="call-transcript"></div>
+    <button class="call-hangup" id="call-hangup">挂断</button>
+  </div>
+</div>
+
+<script>(function(){var t=localStorage.getItem('fitai-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+<script type="module" src="/js/boot.js?v=8"></script>
+<div style="text-align:center;padding:16px 0;font-size:12px;color:var(--text2,#86868b);line-height:2">
+  <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">浙ICP备2026055213号-2</a>
+  <span style="margin:0 10px"></span>
+  <img src="/img/beian.png" style="height:14px;vertical-align:middle" alt="">
+  <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33018502002636" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">浙公网安备 33018502002636号</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,102 @@
+.container { padding: 24rpx; min-height: 100vh; background: var(--bg); }
+
+.section-title { font-size: 28rpx; font-weight: bold; color: var(--text); margin: 28rpx 0 12rpx; }
+
+/* Card Base */
+.card { background: var(--surface); border-radius: 16rpx; padding: 24rpx; margin-bottom: 0; }
+
+/* User Card */
+.user-card { display: flex; align-items: center; gap: 24rpx; }
+.avatar {
+  width: 96rpx; height: 96rpx; border-radius: 50%;
+  background: linear-gradient(135deg, var(--green), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+}
+.avatar-text { font-size: 40rpx; font-weight: bold; color: #fff; }
+.user-info { display: flex; flex-direction: column; gap: 8rpx; }
+.username { font-size: 36rpx; font-weight: bold; color: var(--text); }
+.badge { font-size: 22rpx; padding: 4rpx 16rpx; border-radius: 20rpx; align-self: flex-start; }
+.badge.admin { background: var(--orange-dim); color: var(--orange); }
+.badge.user { background: var(--green-dim); color: var(--green); }
+
+/* Nav Grid */
+.nav-grid { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.nav-tile {
+  width: calc(33.33% - 10rpx); background: var(--surface); border-radius: 14rpx;
+  padding: 24rpx 10rpx; text-align: center; box-sizing: border-box;
+}
+.nav-tile:active { background: var(--bg3); }
+.nav-icon { font-size: 40rpx; display: block; margin-bottom: 8rpx; }
+.nav-label { font-size: 24rpx; color: var(--text2); }
+
+/* Profile Form */
+.profile-form { display: flex; flex-direction: column; gap: 16rpx; }
+.form-row { display: flex; align-items: center; gap: 16rpx; }
+.form-label { width: 140rpx; font-size: 26rpx; color: var(--text2); text-align: right; flex-shrink: 0; }
+.form-input {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 10rpx;
+  padding: 14rpx 18rpx; color: var(--text); font-size: 26rpx;
+}
+.form-input.picker { color: var(--text2); }
+.save-btn {
+  margin-top: 12rpx; background: var(--green); color: #fff; border-radius: 12rpx;
+  font-size: 28rpx; font-weight: bold; padding: 20rpx 0;
+}
+
+/* Model Switch */
+.model-switch { display: flex; flex-direction: column; gap: 12rpx; }
+.model-option {
+  display: flex; align-items: center; gap: 12rpx; padding: 20rpx 22rpx;
+  border-radius: 12rpx; border: 2px solid var(--border);
+}
+.model-option.active { border-color: var(--blue); background: var(--blue-dim); }
+.model-name { font-size: 28rpx; color: var(--text); font-weight: bold; }
+.model-desc { font-size: 24rpx; color: var(--text3); flex: 1; }
+.model-check { font-size: 28rpx; color: var(--blue); font-weight: bold; }
+
+/* Style Switch */
+.style-switch { display: flex; gap: 12rpx; }
+.style-option {
+  flex: 1; text-align: center; padding: 18rpx 0; border-radius: 12rpx;
+  border: 2px solid var(--border); font-size: 26rpx; color: var(--text2);
+}
+.style-option.active { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+
+/* Theme Switch */
+.theme-switch { display: flex; gap: 12rpx; }
+.theme-option {
+  flex: 1; text-align: center; padding: 18rpx 0; border-radius: 12rpx;
+  border: 2px solid var(--border); font-size: 26rpx; color: var(--text2);
+}
+.theme-option.active { border-color: var(--orange); background: var(--orange-dim); color: var(--orange); }
+
+/* Admin Panel */
+.admin-panel { padding: 16rpx 24rpx; }
+.admin-row { display: flex; justify-content: space-between; align-items: center; }
+.admin-label { font-size: 28rpx; color: var(--text); }
+
+/* Server Info */
+.server-info { padding: 0 24rpx; }
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18rpx 0; border-bottom: 1px solid var(--border);
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { font-size: 28rpx; color: var(--text2); }
+.info-val { font-size: 28rpx; color: var(--text); }
+.info-val.green { color: var(--green); }
+.info-val.red { color: var(--red); }
+
+/* Actions */
+.action-card { padding: 0 24rpx; }
+.action-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 24rpx 0; border-bottom: 1px solid var(--border);
+  font-size: 28rpx; color: var(--text);
+}
+.action-row:last-child { border-bottom: none; }
+.arrow { font-size: 36rpx; color: var(--text2); }
+.action-row.danger { color: var(--red); }
+
+.version { text-align: center; padding: 48rpx 0 32rpx; }
+.version text { font-size: 22rpx; color: var(--text3); }

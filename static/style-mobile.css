@@ -1,0 +1,398 @@
+/* ============================================================
+   FitAI-web — 手机端独立 CSS（≤768px）
+   完全不依赖 style.css，通过 <link media> 只在手机端加载
+   ============================================================ */
+
+/* ===== 基础重置 & 变量（与桌面端共用） ===== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg: #1a1714; --bg2: #211e1a; --bg3: #282520;
+  --surface: #2d2a24; --border: #3a3530;
+  --text: #e8e4dd; --text2: #a09888; --text3: #6b6358;
+  --green: #3dd68c; --green-dim: #1e3a2f; --green-glow: rgba(61,214,140,0.15);
+  --blue: #5e9eff; --blue-dim: #1a2d4a;
+  --orange: #f59e4b; --orange-dim: #2d2015;
+  --red: #f87171; --purple: #8a2be2; --purple-dim: rgba(138,43,226,0.12);
+  --brand: #f97316; --brand-gradient: linear-gradient(135deg, #f97316, #f59e4b);
+  --radius: 14px; --radius-sm: 10px; --radius-xs: 8px;
+  --shadow: 0 2px 24px rgba(0,0,0,0.25);
+  --ring-track: #1e1e28;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+/* ===== 全局 ===== */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  position: static;
+  min-height: auto;
+  touch-action: manipulation;
+}
+body::before { display: none; }
+.floating-orb { display: none; }
+
+/* ===== 底部标签栏 ===== */
+.sidebar {
+  position: fixed;
+  bottom: 0; top: auto; left: 0;
+  width: 100%; height: auto;
+  display: flex;
+  flex-direction: row;
+  z-index: 100;
+  padding: 6px 6px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-right: none;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.sidebar-brand { display: none; }
+.sidebar-footer { display: none; }
+.sidebar-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  overflow-x: visible;
+  gap: 0;
+  padding: 0;
+}
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 4px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text2);
+  font-size: 10px;
+  cursor: pointer;
+  min-height: unset;
+  touch-action: manipulation;
+  transition: all 0.15s;
+  width: auto;
+  text-align: center;
+}
+.nav-btn > *:not(:last-child) { margin-bottom: 2px; }
+.nav-btn:hover { background: var(--surface); color: var(--text); }
+.nav-btn.active { background: var(--green-dim); color: var(--green); }
+.nav-btn .nav-icon { font-size: 20px; margin: 0; }
+
+/* ===== 主内容区 ===== */
+.main-content {
+  position: fixed;
+  top: 0;
+  left: 0 !important; right: 0 !important; bottom: calc(48px + max(12px, env(safe-area-inset-bottom, 12px)));
+  margin-left: 0 !important; width: 100% !important; max-width: 100vw !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: calc(var(--vh, 1dvh) * 100 - 56px - max(12px, env(safe-area-inset-bottom, 12px)));
+  padding: 24px 0 0 0;
+  padding-top: max(24px, env(safe-area-inset-top, 0px));
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* ===== 面板系统 ===== */
+.panel {
+  display: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.panel.active { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+/* ===== 首页 ===== */
+#panel-home {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.home-hero { text-align: center; padding: 16px 28px 20px; }
+.home-greeting h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.home-greeting p { font-size: 13px; color: var(--text3); }
+.home-rings-row { display: flex; flex-direction: column; align-items: center; padding: 24px 28px 10px; flex-wrap: wrap; }
+.home-rings-row > *:not(:last-child) { margin-bottom: 16px; }
+.ring-container { width: 150px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+.ring-container > *:not(:last-child) { margin-bottom: 8px; }
+.ring-canvas { width: 150px !important; height: 150px !important; display: block; }
+.ring-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.ring-goal { font-size: 11px; color: var(--text3); }
+.ring-hint { font-size: 10px; color: var(--text3); }
+.home-record-section { padding: 0 28px 8px; }
+.home-record-row { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.record-card { width: 100%; }
+.record-input { font-size: 16px; }
+.home-quick-cards { display: flex; flex-direction: column; }
+.home-quick-cards > *:not(:last-child) { margin-bottom: 10px; }
+.home-quick-cards .home-recommend-card { width: 100%; }
+.section-title { font-size: 14px; padding: 0 4px; margin-bottom: 8px; }
+.weekly-summary { padding: 0 28px; }
+
+/* ===== 对话面板 ===== */
+#panel-chat:not(.active) { display: none !important; }
+#panel-chat.active {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.chat-header { padding: 12px; }
+.chat-header h2 { font-size: 18px; }
+.chat-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px;
+}
+.chat-footer {
+  position: relative;
+  flex-shrink: 0;
+  background: var(--bg);
+  padding: 6px;
+  padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+}
+.chat-input-wrap { display: flex; align-items: flex-end; }
+.chat-input-wrap > *:not(:last-child) { margin-right: 8px; }
+.chat-input-wrap textarea { font-size: 16px !important; }
+.welcome-msg { padding: 20px 12px; }
+.quick-actions { display: flex; flex-direction: column; }
+.quick-actions > *:not(:last-child) { margin-bottom: 8px; }
+.quick-btn { width: 100%; font-size: 13px; padding: 10px; min-height: 44px; }
+.voice-btn { width: 44px; height: 44px; font-size: 18px; }
+#send-btn { width: 44px; height: 44px; }
+.voice-bar { display: flex; margin-bottom: 6px; }
+.voice-bar > *:not(:last-child) { margin-right: 10px; }
+
+/* ===== 仪表盘 ===== */
+.dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 4px; }
+.stat-card { padding: 12px; }
+.stat-card-val { font-size: 20px; }
+.charts-row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.chart-wrap { height: 220px; }
+.video-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+/* ===== 历史 ===== */
+.history-content { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.history-content table { min-width: 600px; font-size: 12px; }
+.history-subnav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.subnav-btn { font-size: 12px; padding: 6px 12px; min-height: 36px; }
+
+/* ===== 健康数据 ===== */
+#health-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+#panel-health, #panel-settings { overflow-y: auto; }
+
+#panel-exercise-library { overflow:hidden; }
+
+/* ===== 运动分析 ===== */
+.ex-type-list { display: flex; flex-direction: column; }
+.ex-type-list > *:not(:last-child) { margin-bottom: 8px; }
+.ex-type-row { flex-wrap: wrap; }
+
+/* ===== 设置 ===== */
+.profile-row { display: flex; flex-direction: column; }
+.profile-field { width: 100%; }
+.profile-field input, .profile-field select { font-size: 16px; }
+.model-switch { flex-direction: column; }
+.settings-section { padding: 16px 12px; }
+
+/* ===== 组件适配 ===== */
+.period-selector > *:not(:last-child) { margin-right: 4px; }
+.period-btn { padding: 6px 12px; font-size: 13px; min-height: 36px; }
+.panel-header { flex-direction: column; align-items: flex-start; }
+.panel-header > *:not(:last-child) { margin-bottom: 8px; }
+.detail-header { flex-direction: column; }
+.detail-header > *:not(:last-child) { margin-bottom: 8px; }
+.detail-stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.detail-chart-wrap { height: 220px; }
+.message { max-width: 92%; }
+.msg-bubble { font-size: 14px; }
+.import-area { padding: 20px 12px; }
+
+/* ===== 运动详情 & 健康详情 ===== */
+.ex-detail { padding: 0 12px 20px; }
+.ex-detail-header { flex-wrap: wrap; }
+.ex-detail-header > *:not(:last-child) { margin-right: 10px; }
+.ex-detail-header h3 { font-size: 16px; }
+.ex-history-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.ex-history-table { min-width: 500px; font-size: 11px; }
+.ex-type-name { min-width: 80px; font-size: 12px; }
+.ex-type-stats { min-width: 100px; font-size: 10px; }
+
+#health-detail { padding: 0 12px; }
+.detail-table-card { margin: 0 0 20px; }
+.detail-chart-card { margin: 0 0 16px; }
+.detail-table-wrap { max-height: 240px; }
+
+.setting-actions { min-width: unset; width: 100%; }
+.setting-item { flex-direction: column; align-items: flex-start; }
+.setting-item > *:not(:last-child) { margin-bottom: 8px; }
+
+/* ===== Splash & Call ===== */
+#splash-screen { cursor: pointer; padding-top: env(safe-area-inset-top, 0px); }
+#call-overlay { padding-top: env(safe-area-inset-top, 0px); }
+
+/* ===== X5 / 非 Safari 浏览器兼容 ===== */
+.stat-card, .record-card, .chart-card,
+.msg-bubble, .welcome-msg, .chat-header,
+.home-recommend-card, .ex-type-row,
+.home-record-row .record-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ===== 主题（浅色 / 暖色） ===== */
+[data-theme="light"] {
+  --bg: #f5f5f7; --bg2: #eeeef0; --bg3: #e4e4e6;
+  --surface: #ffffff; --text: #1d1d1f; --text2: #6e6e73; --text3: #86868b;
+  --border: rgba(0,0,0,0.08); --green: #22c55e; --red: #ef4444;
+  --blue: #3b82f6; --orange: #f59e4b;
+  --green-dim: #dcfce7; --blue-dim: #dbeafe; --orange-dim: #fef3c7;
+  --purple-dim: rgba(138,43,226,0.08);
+  --ring-track: #e5e5ea;
+}
+[data-theme="morning"] {
+  --bg: #fef9ef; --bg2: #fef3c7; --bg3: #fde68a;
+  --surface: #fffbeb; --text: #78350f; --text2: #92400e; --text3: #a16207;
+  --border: rgba(0,0,0,0.1); --green: #16a34a; --red: #dc2626;
+  --blue: #2563eb; --orange: #d97706;
+  --green-dim: #dcfce7; --blue-dim: #dbeafe; --orange-dim: #fef3c7;
+  --ring-track: #f5e6c8;
+}
+
+/* ===== 手机端硬伤修复 ===== */
+/* 底部标签栏文字可见 */
+.sidebar .nav-btn span:not(.nav-icon) { display: inline; }
+
+/* 消除桌面端 hover 偏移 */
+.nav-btn:hover { transform: none; }
+
+/* 触摸目标 ≥44px */
+.period-btn, .subnav-btn { min-height: 44px; }
+.record-btn, .connect-btn, .config-cred-btn { min-height: 44px; }
+.detail-back-btn, .ex-detail-back { min-height: 44px; line-height: 44px; }
+
+/* iOS 输入框不缩放 */
+.cred-input { font-size: 16px; }
+
+/* 面板底部留出 tab bar 空间 */
+.panel.active { padding-bottom: 64px; }
+
+/* iOS tap highlight */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* 面板 backdrop-filter 禁用（性能） */
+.panel { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+
+/* ===== 空状态（与桌面端同款） ===== */
+.empty-state { text-align: center; padding: 48px 20px; color: var(--text3); }
+.empty-icon { font-size: 36px; margin-bottom: 10px; }
+.empty-text { font-size: 14px; margin-bottom: 14px; }
+.empty-cta {
+  display: inline-block; padding: 9px 22px; border-radius: 10px;
+  border: none; background: var(--brand); color: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.chart-empty { min-height: 100px; display: flex; align-items: center; justify-content: center; }
+.chart-empty .empty-state { padding: 20px 14px; width: 100%; }
+.chart-empty .empty-icon { font-size: 26px; margin-bottom: 6px; }
+.empty-state.compact { padding: 20px 14px; }
+.empty-state.compact .empty-icon { font-size: 26px; margin-bottom: 6px; }
+
+/* ===== 骨架屏 ===== */
+.skeleton {
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--bg3) 25%, var(--surface) 50%, var(--bg3) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+.skeleton-text { height: 14px; width: 80%; margin-bottom: 8px; }
+.skeleton-title { height: 20px; width: 60%; margin-bottom: 12px; }
+.skeleton-card { height: 100px; width: 100%; }
+
+/* ===== 渐变 / 玻璃态变量（与桌面端共用）===== */
+:root {
+  --gradient-green: linear-gradient(135deg, #3dd68c, #2ea06a);
+  --gradient-blue: linear-gradient(135deg, #5e9eff, #3b6fd4);
+  --gradient-orange: linear-gradient(135deg, #f59e4b, #d47a2e);
+  --gradient-purple: linear-gradient(135deg, #8a2be2, #6a1fb8);
+  --gradient-brand: linear-gradient(135deg, #f97316, #f59e4b);
+  --glass-bg: rgba(30, 28, 26, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================================
+   Safari 独立适配（[data-browser="safari"]）
+   不碰国内浏览器任何代码路径
+   ============================================================ */
+
+/* 去掉 translateZ(0) — Safari 中 position:fixed + translateZ 产生独立
+   stacking context 导致 fixed 子元素定位基准错乱。
+   同时 z-index 确保 tab bar 在最顶层 */
+[data-browser="safari"] .sidebar {
+  -webkit-transform: none !important;
+  transform: none !important;
+  z-index: 1000;
+}
+
+[data-browser="safari"] .main-content {
+  -webkit-transform: none !important;
+  transform: none !important;
+  -webkit-overflow-scrolling: auto;
+  /* 不用手动算 height，让 top:0 + bottom 自然撑满 */
+  height: auto;
+  padding-top: max(8px, env(safe-area-inset-top, 0px));
+}
+
+/* 确保可点击元素在 Safari 的合成层上响应事件 */
+[data-browser="safari"] .nav-btn {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+[data-browser="safari"] .nav-btn:active {
+  background: var(--green-dim);
+}
+
+/* overflow-scrolling 放在滚动容器上，不要放在 fixed 父级。
+   will-change 替代父级 translateZ 做 GPU 加速 */
+[data-browser="safari"] .panel.active {
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+}
+[data-browser="safari"] #panel-home {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 输入框防止 iOS 自动缩放 */
+[data-browser="safari"] input[type="text"],
+[data-browser="safari"] input[type="number"],
+[data-browser="safari"] textarea,
+[data-browser="safari"] select {
+  font-size: 16px !important;
+}
+
+/* landing 导航栏 backdrop-filter 在 Safari 性能差，直接关掉 */
+[data-browser="safari"] .nav {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: rgba(255,255,255,0.95);
+}

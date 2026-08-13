@@ -1,0 +1,209 @@
+<view class="theme-{{_theme}} container">
+  <scroll-view scroll-y enhanced show-scrollbar="{{false}}" scroll-into-view="{{scrollToId}}"
+    class="chat-scroll" scroll-with-animation="{{true}}">
+
+    <!-- ═══ Welcome: 无对话时显示 ═══ -->
+    <view wx:if="{{showPrompts && messages.length === 0}}" class="welcome">
+      <view class="wl-avatar">
+        <view class="wla-icon">
+          <view class="wlai-screen">
+            <view class="wlai-eye"></view>
+            <view class="wlai-eye"></view>
+            <view class="wlai-smile"></view>
+          </view>
+        </view>
+      </view>
+      <text class="wl-name">FitAI 教练</text>
+      <view class="wl-status">
+        <view class="wls-dot"></view>
+        <text class="wls-text">在线 · 随时帮你</text>
+      </view>
+      <text class="wl-greeting">Hi，我是你的专属 AI 健身教练</text>
+      <text class="wl-sub">告诉我你想做什么，我来帮你安排</text>
+
+      <!-- 引导卡片 -->
+      <view class="wl-cards">
+        <view class="wlc-card" bindtap="onWelcomeCard" data-action="plan">
+          <view class="wlcc-icon-wrap green">
+            <view class="wlcc-css-icon plan-icon">
+              <view class="plan-icon-body"></view>
+              <view class="plan-icon-line"></view>
+              <view class="plan-icon-line short"></view>
+            </view>
+          </view>
+          <view class="wlcc-text">
+            <text class="wlcc-title">制定训练计划</text>
+            <text class="wlcc-desc">根据你的目标，量身定制一周的训练</text>
+          </view>
+          <view class="wlcc-arrow"><view class="arrow-css"></view></view>
+        </view>
+        <view class="wlc-card" bindtap="onWelcomeCard" data-action="analyze">
+          <view class="wlcc-icon-wrap blue">
+            <view class="wlcc-css-icon chart-icon">
+              <view class="chart-bar" style="height:16rpx;"></view>
+              <view class="chart-bar" style="height:28rpx;"></view>
+              <view class="chart-bar" style="height:20rpx;"></view>
+            </view>
+          </view>
+          <view class="wlcc-text">
+            <text class="wlcc-title">分析运动数据</text>
+            <text class="wlcc-desc">看看你的训练效果和变化趋势</text>
+          </view>
+          <view class="wlcc-arrow"><view class="arrow-css"></view></view>
+        </view>
+        <view class="wlc-card" bindtap="onWelcomeCard" data-action="ask">
+          <view class="wlcc-icon-wrap orange">
+            <view class="wlcc-css-icon chat-icon-small">
+              <view class="chat-bubble-small"></view>
+              <view class="chat-tail-small"></view>
+            </view>
+          </view>
+          <view class="wlcc-text">
+            <text class="wlcc-title">随便聊聊</text>
+            <text class="wlcc-desc">减脂怎么吃？动作做得对不对？都可以问</text>
+          </view>
+          <view class="wlcc-arrow"><view class="arrow-css"></view></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ═══ Messages ═══ -->
+    <view class="chat-list">
+      <view wx:for="{{messages}}" wx:key="id" class="msg {{item.role}} {{item.role === 'assistant' ? 'msg-fade-in' : ''}}" id="msg-{{item.id}}">
+
+        <!-- User message -->
+        <view wx:if="{{item.role === 'user'}}" class="msg-row user-row">
+          <view class="msg-bubble user-bubble"><text>{{item.content}}</text></view>
+          <view class="msg-avatar user-avatar">
+            <view class="avatar-icon person-icon">
+              <view class="person-head"></view>
+              <view class="person-body"></view>
+            </view>
+          </view>
+        </view>
+
+        <!-- AI message -->
+        <block wx:if="{{item.role === 'assistant' && !item.error}}">
+          <view class="msg-row ai-row">
+            <view class="msg-avatar ai-avatar">
+              <view class="avatar-icon bot-icon">
+                <view class="bot-screen">
+                  <view class="bot-eye"></view>
+                  <view class="bot-eye"></view>
+                </view>
+              </view>
+            </view>
+            <view class="msg-body">
+              <!-- Agent steps -->
+              <view wx:if="{{item.steps && item.steps.length > 0}}" class="steps-summary" data-msg-idx="{{index}}" bindtap="toggleSteps">
+                <text class="steps-toggle">{{item.stepsCollapsed ? '▸' : '▾'}}</text>
+                <text class="steps-label">思考过程 ({{item.steps.length}} 步)</text>
+              </view>
+              <view wx:if="{{!item.stepsCollapsed && item.steps.length > 0}}" class="steps-detail">
+                <view wx:for="{{item.steps}}" wx:for-index="si" wx:key="si" class="step-item">
+                  <text class="step-dot">{{item.stepType === 'thought' ? '💭' : (item.stepType === 'action' ? '🔧' : '👁️')}}</text>
+                  <view class="step-info">
+                    <text class="step-title">{{item.title}}</text>
+                    <text wx:if="{{item.content}}" class="step-content">{{item.content}}</text>
+                  </view>
+                </view>
+              </view>
+
+              <!-- Message bubble -->
+              <view wx:if="{{item.mdHtml}}" class="msg-bubble ai-bubble">
+                <rich-text class="rich-text-content" nodes="{{item.mdHtml}}"></rich-text>
+              </view>
+              <view wx:elif="{{item.content}}" class="msg-bubble ai-bubble">
+                <text>{{item.content}}</text>
+              </view>
+
+              <!-- Plan card -->
+              <view wx:if="{{item.planCard && item.planCard.plan}}" class="plan-card">
+                <view class="plan-card-bar"></view>
+                <view class="plan-card-body">
+                  <view class="plan-card-title">{{item.planCard.plan.name || '训练计划'}}</view>
+                  <view wx:for="{{item.planCard.plan.days}}" wx:key="day_index" wx:for-item="day" class="plan-day-row">
+                    <text class="plan-day-name">{{day.day_name}}</text>
+                    <text wx:if="{{day.is_rest}}" class="plan-day-rest-label">休息</text>
+                    <block wx:else>
+                      <text class="plan-day-focus">{{day.focus || ''}}</text>
+                      <text class="plan-day-time">{{day.estimated_time || ''}}</text>
+                      <text class="plan-day-count">{{day.exercises.length}}个动作</text>
+                    </block>
+                  </view>
+                  <view class="plan-card-actions">
+                    <button wx:if="{{!item.planCard.confirmed}}" class="plan-btn primary" data-msg-idx="{{index}}" bindtap="confirmPlan">确认计划</button>
+                    <button wx:if="{{!item.planCard.confirmed}}" class="plan-btn" data-msg-idx="{{index}}" bindtap="adjustPlan">调整一下</button>
+                    <text wx:if="{{item.planCard.confirmed}}" class="plan-confirmed">已确认</text>
+                  </view>
+                </view>
+              </view>
+
+              <!-- Follow-up suggestions -->
+              <view wx:if="{{item.suggestions && item.suggestions.length > 0}}" class="suggestions">
+                <text class="sug-label">你可能想问：</text>
+                <view class="sug-chips">
+                  <view wx:for="{{item.suggestions}}" wx:key="*this" wx:for-item="s" class="sug-chip" data-text="{{s}}" bindtap="send">
+                    <text>{{s}}</text>
+                  </view>
+                </view>
+              </view>
+
+              <!-- Source tag -->
+              <view class="msg-source"><text>AI 教练 · FitAI</text></view>
+
+              <text wx:if="{{item.streaming}}" class="streaming-cursor">|</text>
+            </view>
+          </view>
+        </block>
+
+        <!-- Error message -->
+        <view wx:if="{{item.error}}" class="msg-row ai-row">
+          <view class="msg-avatar ai-avatar"></view>
+          <view class="msg-error"><text>{{item.content}}</text></view>
+        </view>
+      </view>
+
+      <!-- Typing indicator -->
+      <view wx:if="{{typing && messages.length > 0 && !messages[messages.length - 1].streaming}}" class="msg assistant msg-fade-in">
+        <view class="msg-row ai-row">
+          <view class="msg-avatar ai-avatar"></view>
+          <view class="typing-dots"><view class="dot"></view><view class="dot"></view><view class="dot"></view></view>
+        </view>
+      </view>
+
+      <!-- Retry -->
+      <view wx:if="{{lastFailed && !typing}}" class="retry-box" bindtap="retry"><text>网络出错，点此重试</text></view>
+      <view style="height:16rpx;"></view>
+    </view>
+  </scroll-view>
+
+  <!-- ═══ Input Bar ═══ -->
+  <view class="chat-bar">
+    <button class="voice-btn {{recording ? 'recording' : ''}}" bindtouchstart="startVoice" bindtouchend="stopVoice">
+      <!-- CSS 话筒图标 -->
+      <view wx:if="{{!recording}}" class="mic-icon">
+        <view class="mic-head"></view>
+        <view class="mic-body"></view>
+        <view class="mic-base"></view>
+      </view>
+      <view wx:else class="stop-icon">
+        <view class="stop-square"></view>
+      </view>
+    </button>
+    <button class="camera-btn" bindtap="openCamera">
+      <view class="cam-icon">
+        <view class="cam-body"></view>
+        <view class="cam-lens"></view>
+        <view class="cam-flash"></view>
+      </view>
+    </button>
+    <input class="chat-input" value="{{input}}" placeholder="和教练说点什么..."
+      placeholder-style="color:var(--text3)" bindinput="onInput"
+      maxlength="500" cursor-spacing="16" adjust-position="{{false}}"
+      confirm-type="send" bindconfirm="send"/>
+    <button class="send-btn {{!input || typing ? 'disabled' : ''}}" bindtap="send" disabled="{{!input || typing}}">
+      <text class="send-icon">↑</text>
+    </button>
+  </view>
+</view>

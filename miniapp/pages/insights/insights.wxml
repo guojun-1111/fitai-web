@@ -1,0 +1,98 @@
+<view class="theme-{{_theme}} container">
+  <view class="page-header">
+    <text class="title">🔮 因果洞察</text>
+    <text class="subtitle">基于 Pearl 因果推理的个性化健康分析</text>
+  </view>
+
+  <!-- Tab Nav -->
+  <view class="tab-nav">
+    <view class="tab-btn {{activeTab === 'causal' ? 'active' : ''}}" data-tab="causal" bindtap="onTabTap">因果图</view>
+    <view class="tab-btn {{activeTab === 'interventions' ? 'active' : ''}}" data-tab="interventions" bindtap="onTabTap">最佳干预</view>
+    <view class="tab-btn {{activeTab === 'changepoints' ? 'active' : ''}}" data-tab="changepoints" bindtap="onTabTap">生理变点</view>
+    <view class="tab-btn {{activeTab === 'predictions' ? 'active' : ''}}" data-tab="predictions" bindtap="onTabTap">预测趋势</view>
+  </view>
+
+  <!-- Loading -->
+  <view wx:if="{{loading}}" class="loading-box">
+    <text class="loading-text">正在分析你的健康数据...</text>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <!-- Causal Graph -->
+    <view wx:if="{{activeTab === 'causal'}}" class="tab-content">
+      <view wx:if="{{causalGraph && causalGraph.edges && causalGraph.edges.length}}" class="graph-info">
+        <view wx:for="{{causalGraph.edges}}" wx:key="index" class="edge-card">
+          <view class="edge-from">
+            <text class="edge-var text-blue">{{item.from}}</text>
+          </view>
+          <view class="edge-arrow">→</view>
+          <view class="edge-to">
+            <text class="edge-var text-green">{{item.to}}</text>
+          </view>
+          <view wx:if="{{item.effect_size}}" class="edge-effect">
+            <text class="text2">效应: {{item.effect_size}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text class="empty-icon">🔗</text>
+        <text class="empty-text">需要更多健康数据来构建因果图</text>
+      </view>
+    </view>
+
+    <!-- Interventions -->
+    <view wx:if="{{activeTab === 'interventions'}}" class="tab-content">
+      <view wx:if="{{interventions.length > 0}}">
+        <view wx:for="{{interventions}}" wx:key="index" class="insight-card">
+          <view class="insight-rank">#{{index + 1}}</view>
+          <view class="insight-body">
+            <text class="insight-title">{{item.intervention || item.description || item.action}}</text>
+            <text wx:if="{{item.expected_effect}}" class="insight-detail">预期效果: {{item.expected_effect}}</text>
+            <text wx:if="{{item.confidence}}" class="insight-detail">置信度: {{item.confidence}}</text>
+          </view>
+          <view wx:if="{{index < 3}}" class="insight-medal">{{index === 0 ? '🥇' : (index === 1 ? '🥈' : '🥉')}}</view>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text class="empty-icon">💡</text>
+        <text class="empty-text">暂无干预建议</text>
+      </view>
+    </view>
+
+    <!-- Changepoints -->
+    <view wx:if="{{activeTab === 'changepoints'}}" class="tab-content">
+      <view wx:if="{{changepoints.length > 0}}">
+        <view wx:for="{{changepoints}}" wx:key="index" class="insight-card">
+          <view class="insight-icon text-red">⚠️</view>
+          <view class="insight-body">
+            <text class="insight-title">{{item.metric || item.description}}</text>
+            <text wx:if="{{item.date}}" class="insight-detail">检测日期: {{item.date}}</text>
+            <text wx:if="{{item.evidence}}" class="insight-detail">证据水平: {{item.evidence}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text class="empty-icon">📊</text>
+        <text class="empty-text">未检测到显著生理变点</text>
+      </view>
+    </view>
+
+    <!-- Predictions -->
+    <view wx:if="{{activeTab === 'predictions'}}" class="tab-content">
+      <view wx:if="{{predictions.length > 0}}">
+        <view wx:for="{{predictions}}" wx:key="index" class="insight-card">
+          <view class="insight-icon text-blue">🔮</view>
+          <view class="insight-body">
+            <text class="insight-title">{{item.metric || item.target}}</text>
+            <text wx:if="{{item.predicted_value}}" class="insight-detail">预测值: {{item.predicted_value}}</text>
+            <text wx:if="{{item.confidence_interval}}" class="insight-detail">置信区间: {{item.confidence_interval}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text class="empty-icon">🔮</text>
+        <text class="empty-text">记录更多数据来生成预测</text>
+      </view>
+    </view>
+  </block>
+</view>

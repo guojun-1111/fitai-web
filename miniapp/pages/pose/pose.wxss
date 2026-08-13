@@ -1,0 +1,147 @@
+.container { padding: 32rpx 24rpx calc(120rpx + env(safe-area-inset-bottom)); min-height: 100vh; }
+.pose-section { animation: pageIn 0.35s ease-out both; }
+@keyframes pageIn { from { opacity: 0; transform: translateY(20rpx); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══ Select: Header ═══ */
+.ps-header { margin-bottom: 28rpx; }
+.psh-title { font-size: 44rpx; font-weight: 700; color: var(--text); display: block; margin-bottom: 10rpx; }
+.psh-desc { font-size: 26rpx; color: var(--text2); line-height: 1.6; display: block; }
+
+/* ═══ Select: Exercise Cards ═══ */
+.ps-exercise-list { display: flex; flex-direction: column; gap: 12rpx; margin-bottom: 32rpx; }
+.pse-card {
+  display: flex; align-items: center; gap: 18rpx;
+  padding: 22rpx 20rpx; background: var(--surface);
+  border-radius: 18rpx; border: 1rpx solid var(--border-light);
+  box-shadow: var(--card-shadow);
+}
+.pse-card:active { background: var(--bg2); transform: scale(0.985); }
+.psec-icon-wrap {
+  width: 72rpx; height: 72rpx; min-width: 72rpx; border-radius: 18rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+.psec-icon {
+  width: 40rpx; height: 40rpx; border-radius: 50%;
+  border: 3rpx solid var(--text);
+  position: relative;
+}
+/* Exercise-specific icon shapes */
+.psec-icon.squat {
+  border-radius: 50%;
+  border-width: 3rpx;
+}
+.psec-icon.pushup {
+  width: 44rpx; height: 14rpx; border-radius: 0;
+  border-bottom: none; border-left: none; border-right: none;
+}
+.psec-icon.plank {
+  width: 44rpx; height: 8rpx; border-radius: 4rpx;
+}
+.psec-icon.lunge {
+  width: 32rpx; height: 40rpx; border-radius: 40rpx 40rpx 0 0;
+  border-bottom: none;
+}
+.psec-icon.ytw {
+  border: none; width: 30rpx; height: 6rpx; border-radius: 3rpx;
+  background: var(--text);
+  box-shadow: 0 -12rpx 0 var(--text), 0 12rpx 0 var(--text);
+}
+.psec-info { flex: 1; min-width: 0; }
+.psec-name { font-size: 30rpx; font-weight: 600; color: var(--text); display: block; margin-bottom: 4rpx; }
+.psec-target { font-size: 24rpx; color: var(--text3); display: block; }
+.psec-arrow { font-size: 28rpx; color: var(--text3); }
+
+/* ═══ Select: Tips ═══ */
+.ps-tips { padding: 24rpx; background: var(--surface); border-radius: 16rpx; border: 1rpx solid var(--border-light); }
+.pst-title { font-size: 26rpx; font-weight: 600; color: var(--text); display: block; margin-bottom: 12rpx; }
+.pst-item { font-size: 24rpx; color: var(--text2); display: block; line-height: 1.8; }
+
+/* ═══ Ready ═══ */
+.pr-exercise-badge {
+  display: flex; flex-direction: column; align-items: center; padding: 36rpx 0;
+  margin-bottom: 28rpx;
+}
+.preb-label { font-size: 24rpx; color: var(--text3); margin-bottom: 8rpx; }
+.preb-name { font-size: 48rpx; font-weight: 700; color: var(--green); }
+
+.pr-checkpoints {
+  background: var(--surface); border-radius: 18rpx; padding: 24rpx;
+  margin-bottom: 36rpx; border: 1rpx solid var(--border-light);
+}
+.prc-title { font-size: 28rpx; font-weight: 600; color: var(--text); display: block; margin-bottom: 16rpx; }
+.prc-item { display: flex; align-items: flex-start; gap: 10rpx; padding: 8rpx 0; font-size: 26rpx; color: var(--text2); line-height: 1.5; }
+.prc-dot { width: 8rpx; min-width: 8rpx; height: 8rpx; border-radius: 50%; background: var(--green); margin-top: 14rpx; }
+
+.pr-actions { display: flex; flex-direction: column; gap: 16rpx; align-items: center; }
+.pra-btn {
+  width: 520rpx; display: flex; align-items: center; justify-content: center; gap: 16rpx;
+  padding: 28rpx 0; border-radius: 20rpx; font-size: 30rpx; font-weight: 600;
+  border: none; line-height: 1;
+}
+.pra-btn.record { background: var(--green); color: #fff; }
+.pra-btn.album { background: var(--surface); color: var(--text); border: 2rpx solid var(--border); }
+.pra-btn.back { background: transparent; color: var(--text3); font-size: 26rpx; font-weight: 400; }
+.pra-btn-icon { width: 40rpx; height: 40rpx; display: flex; align-items: center; justify-content: center; }
+.record-dot { width: 28rpx; height: 28rpx; border-radius: 50%; background: #fff; }
+.album-icon { width: 32rpx; height: 26rpx; border: 3rpx solid var(--text); border-radius: 4rpx; }
+
+/* ═══ Analyzing ═══ */
+.pa-loading { display: flex; flex-direction: column; align-items: center; padding-top: 120rpx; }
+.pal-spinner { margin-bottom: 40rpx; }
+.pals-ring {
+  width: 100rpx; height: 100rpx; border-radius: 50%;
+  border: 4rpx solid var(--border);
+  border-top-color: var(--green);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.pal-title { font-size: 32rpx; font-weight: 600; color: var(--text); margin-bottom: 10rpx; }
+.pal-desc { font-size: 26rpx; color: var(--text3); margin-bottom: 40rpx; }
+.pal-progress { width: 480rpx; height: 6rpx; background: var(--bg2); border-radius: 3rpx; overflow: hidden; }
+.palp-bar { height: 100%; background: var(--green); border-radius: 3rpx; transition: width 0.4s ease; }
+
+/* ═══ Results ═══ */
+.pdiag { display: flex; flex-direction: column; align-items: center; }
+
+/* Score ring — simple bordered circle */
+.pd-score-ring { display: flex; justify-content: center; margin-bottom: 36rpx; }
+.pdsr-ring {
+  width: 200rpx; height: 200rpx; border-radius: 50%;
+  border: 10rpx solid var(--green);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--bg);
+}
+.pdsr-value { font-size: 56rpx; font-weight: 700; color: var(--text); line-height: 1.1; }
+.pdsr-label { font-size: 24rpx; color: var(--text3); margin-top: 4rpx; }
+
+/* Diagnosis cards */
+.pd-issue, .pd-causal, .pd-fix {
+  width: 100%; background: var(--surface); border-radius: 16rpx;
+  padding: 20rpx 24rpx; margin-bottom: 14rpx;
+  border: 1rpx solid var(--border-light); box-sizing: border-box;
+}
+.pdi-header { display: flex; align-items: center; gap: 10rpx; margin-bottom: 10rpx; }
+.pdih-dot { width: 10rpx; height: 10rpx; border-radius: 50%; }
+.pdih-title { font-size: 26rpx; font-weight: 600; color: var(--text); }
+.pdi-text { font-size: 26rpx; color: var(--text2); line-height: 1.65; }
+
+/* Rep quality bars */
+.pd-quality { width: 100%; background: var(--surface); border-radius: 16rpx; padding: 20rpx 24rpx; margin-bottom: 14rpx; border: 1rpx solid var(--border-light); box-sizing: border-box; }
+.pdq-title { font-size: 26rpx; font-weight: 600; color: var(--text); display: block; margin-bottom: 16rpx; }
+.pdq-list { display: flex; flex-direction: column; gap: 10rpx; }
+.pdq-item { display: flex; align-items: center; gap: 12rpx; }
+.pdqi-rep { font-size: 24rpx; color: var(--text2); min-width: 70rpx; }
+.pdqi-bar-wrap { flex: 1; height: 12rpx; background: var(--bg2); border-radius: 6rpx; overflow: hidden; }
+.pdqi-bar { height: 100%; border-radius: 6rpx; }
+.pdqi-score { font-size: 24rpx; color: var(--text); font-weight: 600; min-width: 48rpx; text-align: right; }
+
+/* Actions */
+.pd-actions { width: 100%; display: flex; gap: 14rpx; margin-top: 12rpx; }
+.pda-btn { flex: 1; padding: 22rpx 0; border-radius: 16rpx; font-size: 28rpx; font-weight: 600; border: none; line-height: 1; }
+.pda-btn.primary { background: var(--green); color: #fff; }
+.pda-btn:not(.primary) { background: var(--bg2); color: var(--text); }
+
+/* Empty / error */
+.pd-empty { display: flex; flex-direction: column; align-items: center; padding-top: 120rpx; }
+.pde-title { font-size: 36rpx; font-weight: 600; color: var(--text); margin-bottom: 12rpx; }
+.pde-desc { font-size: 28rpx; color: var(--text3); text-align: center; line-height: 1.5; max-width: 500rpx; }

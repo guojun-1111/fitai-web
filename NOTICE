@@ -1,0 +1,17 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+
+Files: *
+Copyright: 2026 Chen Guojun
+License: AGPL-3.0-or-later
+
+Files: fitai/analysis/*
+Copyright: 2026 Chen Guojun
+License: MIT
+
+Files: tests/*
+Copyright: 2026 Chen Guojun
+License: MIT
+
+Files: scripts/*
+Copyright: 2026 Chen Guojun
+License: MIT

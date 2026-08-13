@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/chat/chat",
+    "pages/health/health",
+    "pages/profile/profile",
+    "pages/import/import",
+    "pages/dashboard/dashboard",
+    "pages/history/history",
+    "pages/exercises/exercises",
+    "pages/exercise-library/exercise-library",
+    "pages/insights/insights",
+    "pages/plan/plan",
+    "pages/plan-wizard/plan-wizard",
+    "pages/pose/pose"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#1a1714",
+    "navigationBarTitleText": "FitAI",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#a09888",
+    "selectedColor": "#3dd68c",
+    "backgroundColor": "#1a1714",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页", "iconPath": "icons/home.png", "selectedIconPath": "icons/home-active.png" },
+      { "pagePath": "pages/chat/chat", "text": "AI教练", "iconPath": "icons/chat.png", "selectedIconPath": "icons/chat-active.png" },
+      { "pagePath": "pages/health/health", "text": "健康", "iconPath": "icons/health.png", "selectedIconPath": "icons/health-active.png" },
+      { "pagePath": "pages/profile/profile", "text": "我的", "iconPath": "icons/profile.png", "selectedIconPath": "icons/profile-active.png" }
+    ]
+  }
+}

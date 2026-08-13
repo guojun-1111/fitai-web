@@ -1,0 +1,155 @@
+<view class="theme-{{_theme}} container">
+  <!-- ═══ Step: Select Exercise ═══ -->
+  <view wx:if="{{step === 'select'}}" class="pose-section">
+    <view class="ps-header">
+      <text class="psh-title">动作纠正</text>
+      <text class="psh-desc">选择一个动作，录一段你的训练视频，AI 会帮你分析动作是否标准</text>
+    </view>
+
+    <view class="ps-exercise-list">
+      <view wx:for="{{exercises}}" wx:key="id" class="pse-card" bindtap="selectExercise" data-id="{{item.id}}" data-name="{{item.name}}">
+        <view class="psec-icon-wrap" style="background: {{item.color}}15;">
+          <view class="psec-icon {{item.id}}"></view>
+        </view>
+        <view class="psec-info">
+          <text class="psec-name">{{item.name}}</text>
+          <text class="psec-target">{{item.target}}</text>
+        </view>
+        <view class="psec-arrow">→</view>
+      </view>
+    </view>
+
+    <view class="ps-tips">
+      <text class="pst-title">拍摄建议</text>
+      <text class="pst-item">· 手机放在侧面，能拍到全身侧面</text>
+      <text class="pst-item">· 做 3-5 个完整动作即可</text>
+      <text class="pst-item">· 穿紧身衣物以便看清关节角度</text>
+      <text class="pst-item">· 光线充足，背景简单</text>
+    </view>
+  </view>
+
+  <!-- ═══ Step: Ready to Record ═══ -->
+  <view wx:if="{{step === 'ready'}}" class="pose-section">
+    <view class="pr-exercise-badge">
+      <text class="preb-label">当前动作</text>
+      <text class="preb-name">{{selectedExercise.name}}</text>
+    </view>
+
+    <view class="pr-checkpoints">
+      <text class="prc-title">拍摄时请注意这些关键点：</text>
+      <view wx:for="{{currentCheckpoints}}" wx:key="*this" wx:for-item="cp" class="prc-item">
+        <view class="prc-dot"></view>
+        <text>{{cp}}</text>
+      </view>
+    </view>
+
+    <view class="pr-actions">
+      <button class="pra-btn record" bindtap="startRecord">
+        <view class="pra-btn-icon">
+          <view class="record-dot"></view>
+        </view>
+        <text>开始录制</text>
+      </button>
+      <button class="pra-btn album" bindtap="chooseFromAlbum">
+        <view class="pra-btn-icon">
+          <view class="album-icon"></view>
+        </view>
+        <text>从相册选择</text>
+      </button>
+      <button class="pra-btn back" bindtap="backToSelect">
+        <text>← 重新选择动作</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- ═══ Step: Analyzing ═══ -->
+  <view wx:if="{{step === 'analyzing'}}" class="pose-section">
+    <view class="pa-loading">
+      <view class="pal-spinner">
+        <view class="pals-ring"></view>
+      </view>
+      <text class="pal-title">正在分析你的动作</text>
+      <text class="pal-desc">{{analysisMessage}}</text>
+      <view class="pal-progress">
+        <view class="palp-bar" style="width: {{analysisProgress}}%;"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ═══ Step: Results ═══ -->
+  <view wx:if="{{step === 'result' && diagnosis}}" class="pose-section">
+    <view class="pdiag">
+      <!-- Overall score ring -->
+      <view class="pd-score-ring">
+        <view class="pdsr-ring" style="border-color: {{!diagnosis.overall_score ? '#3dd68c' : (diagnosis.overall_score >= 80 ? '#3dd68c' : (diagnosis.overall_score >= 60 ? '#f59e4b' : '#f87171'))}};">
+          <text class="pdsr-value">{{diagnosis.overall_score || '--'}}</text>
+          <text class="pdsr-label">综合评分</text>
+        </view>
+      </view>
+
+      <!-- Primary issue -->
+      <view wx:if="{{diagnosis.diagnosis}}" class="pd-issue">
+        <view class="pdi-header">
+          <view class="pdih-dot" style="background: var(--red);"></view>
+          <text class="pdih-title">主要问题</text>
+        </view>
+        <text class="pdi-text">{{diagnosis.diagnosis}}</text>
+      </view>
+
+      <!-- Causal path -->
+      <view wx:if="{{diagnosis.causal_path}}" class="pd-causal">
+        <view class="pdi-header">
+          <view class="pdih-dot" style="background: var(--blue);"></view>
+          <text class="pdih-title">因果链</text>
+        </view>
+        <text class="pdi-text">{{diagnosis.causal_path}}</text>
+      </view>
+
+      <!-- Correction -->
+      <view wx:if="{{diagnosis.correction}}" class="pd-fix">
+        <view class="pdi-header">
+          <view class="pdih-dot" style="background: var(--green);"></view>
+          <text class="pdih-title">如何纠正</text>
+        </view>
+        <text class="pdi-text">{{diagnosis.correction}}</text>
+      </view>
+
+      <!-- Recommended exercise -->
+      <view wx:if="{{diagnosis.correction_exercise}}" class="pd-fix">
+        <view class="pdi-header">
+          <view class="pdih-dot" style="background: var(--purple);"></view>
+          <text class="pdih-title">推荐辅助训练</text>
+        </view>
+        <text class="pdi-text">{{diagnosis.correction_exercise}}</text>
+      </view>
+
+      <!-- Rep-by-rep quality -->
+      <view wx:if="{{diagnosis.quality_detail && diagnosis.quality_detail.length > 0}}" class="pd-quality">
+        <text class="pdq-title">逐次质量</text>
+        <view class="pdq-list">
+          <view wx:for="{{diagnosis.quality_detail}}" wx:key="rep" wx:for-item="q" class="pdq-item">
+            <text class="pdqi-rep">第 {{q.rep}} 次</text>
+            <view class="pdqi-bar-wrap">
+              <view class="pdqi-bar" style="width: {{q.quality || 50}}%; background: {{q.quality >= 80 ? '#3dd68c' : (q.quality >= 60 ? '#f59e4b' : '#f87171')}};"></view>
+            </view>
+            <text class="pdqi-score">{{q.quality || '--'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="pd-actions">
+        <button class="pda-btn primary" bindtap="retryPose">重新录制</button>
+        <button class="pda-btn" bindtap="goChat">问教练怎么办</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ═══ No results fallback ═══ -->
+  <view wx:if="{{step === 'result' && !diagnosis}}" class="pose-section">
+    <view class="pd-empty">
+      <text class="pde-title">分析未完成</text>
+      <text class="pde-desc">{{errorMsg || '服务器暂时无法处理该视频，请稍后重试'}}</text>
+      <button class="ea-btn primary" bindtap="retryPose" style="margin-top:32rpx;">重新录制</button>
+    </view>
+  </view>
+</view>

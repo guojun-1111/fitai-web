@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "miniprogram-ci": "^2.1.31"
+  },
+  "dependencies": {
+    "echarts": "^6.1.0"
+  }
+}

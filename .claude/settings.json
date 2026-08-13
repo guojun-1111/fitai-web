@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(cd C:/Users/chenguojun/Projects/fitai-web && python:*)",
+      "Bash(cd C:/Users/chenguojun/Projects/fitai-web && pytest:*)",
+      "Bash(cd C:/Users/chenguojun/Projects/fitai-web && bash deploy.sh)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[fitai-web] 约束: 1核VPS, 纯Python, SQLite WAL'"
+          }
+        ]
+      }
+    ]
+  }
+}

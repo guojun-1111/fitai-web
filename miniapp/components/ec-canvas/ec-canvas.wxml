@@ -1,0 +1,12 @@
+<view class="ec-container" style="width:{{width}}rpx;height:{{height}}rpx;">
+  <canvas
+    type="2d"
+    id="{{canvasId}}"
+    canvas-id="{{canvasId}}"
+    class="ec-canvas"
+    style="width:{{width}}rpx;height:{{height}}rpx;"
+    bindtouchstart="{{ec.touchStart}}"
+    bindtouchmove="{{ec.touchMove}}"
+    bindtouchend="{{ec.touchEnd}}"
+  />
+</view>

@@ -1,0 +1,185 @@
+<view class="theme-{{_theme}} container">
+  <!-- User Info Card -->
+  <view class="card user-card">
+    <view class="avatar">
+      <text class="avatar-text">{{username[0] || '?'}}</text>
+    </view>
+    <view class="user-info">
+      <text class="username">{{username}}</text>
+      <text wx:if="{{isAdmin}}" class="badge admin">管理员</text>
+      <text wx:elif="{{authenticated}}" class="badge user">已登录</text>
+    </view>
+  </view>
+
+  <!-- Quick Navigation -->
+  <view class="section-title">📋 功能入口</view>
+  <view class="nav-grid">
+    <view class="nav-tile" bindtap="goTrainingPlan">
+      <text class="nav-icon">📅</text>
+      <text class="nav-label">训练计划</text>
+    </view>
+    <view class="nav-tile" bindtap="goDashboard">
+      <text class="nav-icon">📊</text>
+      <text class="nav-label">仪表盘</text>
+    </view>
+    <view class="nav-tile" bindtap="goHistory">
+      <text class="nav-icon">📋</text>
+      <text class="nav-label">历史记录</text>
+    </view>
+    <view class="nav-tile" bindtap="goExercises">
+      <text class="nav-icon">🏃</text>
+      <text class="nav-label">运动分析</text>
+    </view>
+    <view class="nav-tile" bindtap="goExerciseLib">
+      <text class="nav-icon">📚</text>
+      <text class="nav-label">动作库</text>
+    </view>
+    <view class="nav-tile" bindtap="goInsights">
+      <text class="nav-icon">🔮</text>
+      <text class="nav-label">因果洞察</text>
+    </view>
+    <view class="nav-tile" bindtap="goImport">
+      <text class="nav-icon">📥</text>
+      <text class="nav-label">导入数据</text>
+    </view>
+  </view>
+
+  <!-- Profile Form -->
+  <view wx:if="{{authenticated}}" class="section-title">👤 个人资料</view>
+  <view wx:if="{{authenticated}}" class="card profile-form">
+    <view class="form-row">
+      <text class="form-label">称呼</text>
+      <input class="form-input" value="{{profile.name}}" placeholder="你的名字" data-field="name" bindinput="onProfileInput" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">性别</text>
+      <picker mode="selector" range="{{['', '男', '女']}}" value="{{profile.gender === '女' ? 2 : profile.gender === '男' ? 1 : 0}}" data-field="gender" bindchange="onProfileInput">
+        <view class="form-input picker">{{profile.gender || '请选择'}}</view>
+      </picker>
+    </view>
+    <view class="form-row">
+      <text class="form-label">出生年份</text>
+      <input class="form-input" type="number" value="{{profile.birth}}" placeholder="如 1995" data-field="birth" bindinput="onProfileInput" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">身高 (cm)</text>
+      <input class="form-input" type="digit" value="{{profile.height}}" placeholder="如 175" data-field="height" bindinput="onProfileInput" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">体重 (kg)</text>
+      <input class="form-input" type="digit" value="{{profile.weight}}" placeholder="如 70" data-field="weight" bindinput="onProfileInput" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">活动水平</text>
+      <input class="form-input" value="{{profile.level}}" placeholder="如 每周3-5次" data-field="level" bindinput="onProfileInput" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">健身目标</text>
+      <input class="form-input" value="{{profile.goal}}" placeholder="如 减脂到65kg" data-field="goal" bindinput="onProfileInput" />
+    </view>
+    <button class="save-btn" bindtap="saveProfile">
+      {{profileSaved ? '已保存 ✓' : '保存个人资料'}}
+    </button>
+  </view>
+
+  <!-- AI Model -->
+  <view wx:if="{{authenticated}}" class="section-title">🤖 AI 模型</view>
+  <view wx:if="{{authenticated}}" class="card model-switch">
+    <view class="model-option {{currentModel === 'deepseek-v4-flash' ? 'active' : ''}}" data-model="deepseek-v4-flash" bindtap="switchModel">
+      <text class="model-name">Flash 快速</text>
+      <text class="model-desc">响应快，日常对话推荐</text>
+      <text wx:if="{{currentModel === 'deepseek-v4-flash'}}" class="model-check">✓</text>
+    </view>
+    <view class="model-option {{currentModel === 'deepseek-v4-pro' ? 'active' : ''}}" data-model="deepseek-v4-pro" bindtap="switchModel">
+      <text class="model-name">Pro 深度</text>
+      <text class="model-desc">推理更强，复杂分析</text>
+      <text wx:if="{{currentModel === 'deepseek-v4-pro'}}" class="model-check">✓</text>
+    </view>
+  </view>
+
+  <!-- Reply Style -->
+  <view wx:if="{{authenticated}}" class="section-title">💬 回复风格</view>
+  <view wx:if="{{authenticated}}" class="card style-switch">
+    <view class="style-option {{replyStyle === 'casual' ? 'active' : ''}}" data-style="casual" bindtap="setStyle">
+      <text>💬 口语风</text>
+    </view>
+    <view class="style-option {{replyStyle === 'data' ? 'active' : ''}}" data-style="data" bindtap="setStyle">
+      <text>📊 数据风</text>
+    </view>
+  </view>
+
+  <!-- Coach Style -->
+  <view wx:if="{{authenticated}}" class="section-title">教练风格</view>
+  <view wx:if="{{authenticated}}" class="card style-switch">
+    <view class="style-option {{coachStyle === 'friend' ? 'active' : ''}}" data-cs="friend" bindtap="setCoachStyle">
+      <text>像朋友</text>
+    </view>
+    <view class="style-option {{coachStyle === 'coach' ? 'active' : ''}}" data-cs="coach" bindtap="setCoachStyle">
+      <text>像教练</text>
+    </view>
+    <view class="style-option {{coachStyle === 'family' ? 'active' : ''}}" data-cs="family" bindtap="setCoachStyle">
+      <text>像家人</text>
+    </view>
+  </view>
+
+  <!-- Theme -->
+  <view class="section-title">🎨 界面主题</view>
+  <view class="card theme-switch">
+    <view class="theme-option {{currentTheme === 'dark' ? 'active' : ''}}" data-theme="dark" bindtap="switchTheme">
+      <text>🌙 深色</text>
+    </view>
+    <view class="theme-option {{currentTheme === 'light' ? 'active' : ''}}" data-theme="light" bindtap="switchTheme">
+      <text>☀️ 浅色</text>
+    </view>
+    <view class="theme-option {{currentTheme === 'morning' ? 'active' : ''}}" data-theme="morning" bindtap="switchTheme">
+      <text>🌅 暖色</text>
+    </view>
+  </view>
+
+  <!-- Admin Panel -->
+  <view wx:if="{{authenticated && isAdmin}}" class="section-title">🔧 管理员面板</view>
+  <view wx:if="{{authenticated && isAdmin}}" class="card admin-panel">
+    <view class="admin-row">
+      <text class="admin-label">允许新用户注册</text>
+      <switch checked="{{registrationOpen}}" bindchange="toggleRegistration" color="#3dd68c" />
+    </view>
+  </view>
+
+  <!-- Server Status -->
+  <view class="section-title">📡 服务器状态</view>
+  <view class="card server-info">
+    <view class="info-row">
+      <text class="info-label">状态</text>
+      <text class="info-val {{serverStatus === '在线' || serverStatus === '初始化中' ? 'green' : 'red'}}">{{serverStatus}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">用户数</text>
+      <text class="info-val">{{userCount}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">新用户注册</text>
+      <text class="info-val {{registrationOpen ? 'green' : ''}}">{{registrationOpen ? '开放中' : '已关闭'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">缓存</text>
+      <text class="info-val">{{cacheSize}}</text>
+    </view>
+  </view>
+
+  <!-- Actions -->
+  <view class="section-title">⚙️ 操作</view>
+  <view class="card action-card">
+    <view class="action-row" bindtap="clearCache">
+      <text>🗑️ 清除缓存</text>
+      <text class="arrow">›</text>
+    </view>
+    <view wx:if="{{authenticated}}" class="action-row danger" bindtap="doLogout">
+      <text>🚪 退出登录</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="version">
+    <text>FitAI v1.0 — 智能运动健康助手</text>
+  </view>
+</view>

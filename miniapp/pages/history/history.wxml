@@ -1,0 +1,83 @@
+<view class="theme-{{_theme}} container">
+  <!-- Sub Navigation -->
+  <view class="subnav-bar">
+    <view
+      wx:for="{{subnav}}"
+      wx:key="key"
+      class="subnav-tag {{type === item.key ? 'active' : ''}}"
+      data-type="{{item.key}}"
+      bindtap="onTypeTap"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- Loading -->
+  <view wx:if="{{loading}}" class="loading-box">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- Workout Records -->
+  <block wx:if="{{!loading && type === 'workout'}}">
+    <view wx:if="{{records.length > 0}}" class="record-list">
+      <view wx:for="{{records}}" wx:key="id" class="record-card">
+        <view class="record-header">
+          <text class="record-date">{{item.workout_date || item.date}}</text>
+          <text class="record-type badge-green">{{item.exercise_type || item.ex_type || '训练'}}</text>
+        </view>
+        <view class="record-body">
+          <text wx:if="{{item.sets}}" class="record-detail">{{item.sets}}组 × {{item.reps}}次 × {{item.weight}}kg</text>
+          <text wx:if="{{item.duration_minutes}}" class="record-detail">⏱ {{item.duration_minutes}}分钟</text>
+          <text wx:if="{{item.calories}}" class="record-detail">🔥 {{item.calories}} kcal</text>
+        </view>
+        <text wx:if="{{item.notes}}" class="record-notes">{{item.notes}}</text>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">🏋️</text>
+      <text class="empty-text">暂无训练记录</text>
+    </view>
+  </block>
+
+  <!-- Metrics Records -->
+  <block wx:if="{{!loading && type === 'metrics'}}">
+    <view wx:if="{{records.length > 0}}" class="record-list">
+      <view wx:for="{{records}}" wx:key="id" class="record-card">
+        <view class="record-header">
+          <text class="record-date">{{item.date || item.record_date}}</text>
+        </view>
+        <view class="record-body">
+          <text wx:if="{{item.weight}}" class="record-detail">⚖️ 体重: {{item.weight}} kg</text>
+          <text wx:if="{{item.body_fat}}" class="record-detail">📏 体脂: {{item.body_fat}}%</text>
+          <text wx:if="{{item.waist}}" class="record-detail">📐 腰围: {{item.waist}} cm</text>
+          <text wx:if="{{item.chest}}" class="record-detail">📐 胸围: {{item.chest}} cm</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">📏</text>
+      <text class="empty-text">暂无体测数据</text>
+    </view>
+  </block>
+
+  <!-- Nutrition Records -->
+  <block wx:if="{{!loading && type === 'nutrition'}}">
+    <view wx:if="{{records.length > 0}}" class="record-list">
+      <view wx:for="{{records}}" wx:key="id" class="record-card">
+        <view class="record-header">
+          <text class="record-date">{{item.date || item.record_date}}</text>
+          <text wx:if="{{item.meal_type}}" class="record-type badge-orange">{{item.meal_type}}</text>
+        </view>
+        <view class="record-body">
+          <text wx:if="{{item.food_name}}" class="record-detail">🍽 {{item.food_name}}</text>
+          <text wx:if="{{item.calories}}" class="record-detail">🔥 {{item.calories}} kcal</text>
+          <text wx:if="{{item.protein}}" class="record-detail">🥩 蛋白质: {{item.protein}}g</text>
+          <text wx:if="{{item.carbs}}" class="record-detail">🍚 碳水: {{item.carbs}}g</text>
+          <text wx:if="{{item.fat}}" class="record-detail">🧈 脂肪: {{item.fat}}g</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">🍽️</text>
+      <text class="empty-text">暂无饮食记录</text>
+    </view>
+  </block>
+</view>

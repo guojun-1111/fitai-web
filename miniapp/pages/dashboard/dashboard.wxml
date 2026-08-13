@@ -1,0 +1,105 @@
+<view class="theme-{{_theme}} container">
+  <!-- Period Selector -->
+  <view class="period-bar">
+    <view
+      wx:for="{{periods}}"
+      wx:key="value"
+      class="period-tag {{period === item.value ? 'active' : ''}}"
+      data-period="{{item.value}}"
+      bindtap="onPeriodTap"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- Loading skeleton -->
+  <view wx:if="{{loading}}">
+    <view class="skeleton" style="height:48rpx;margin-bottom:16rpx;border-radius:40rpx;"></view>
+    <view class="stats-grid">
+      <view class="skeleton" style="width:calc(50% - 8rpx);height:120rpx;border-radius:20rpx;"></view>
+      <view class="skeleton" style="width:calc(50% - 8rpx);height:120rpx;border-radius:20rpx;"></view>
+      <view class="skeleton" style="width:calc(50% - 8rpx);height:120rpx;border-radius:20rpx;"></view>
+      <view class="skeleton" style="width:calc(50% - 8rpx);height:120rpx;border-radius:20rpx;"></view>
+    </view>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <!-- Stats Grid -->
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-icon">🔥</text>
+        <text class="stat-val">{{stats.streak}}</text>
+        <text class="stat-label">连续训练天数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-icon">🏋️</text>
+        <text class="stat-val">{{stats.workouts}}</text>
+        <text class="stat-label">训练次数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-icon">⚖️</text>
+        <text class="stat-val">{{stats.latest_weight}}</text>
+        <text class="stat-label">最新体重</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-icon">📏</text>
+        <text class="stat-val">{{stats.latest_bodyfat}}</text>
+        <text class="stat-label">体脂率</text>
+      </view>
+    </view>
+
+    <!-- Achievements -->
+    <view class="section-title">🏆 成就徽章</view>
+    <view wx:if="{{achievements.length > 0}}" class="achieve-row">
+      <view wx:for="{{achievements}}" wx:key="name" class="achieve-badge">
+        <text>{{item.icon}} {{item.name}}</text>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">🏆</text>
+      <text class="empty-text">记录更多训练数据来解锁成就</text>
+    </view>
+
+    <!-- Weight Trend Chart -->
+    <view class="section-title">📈 体重趋势 (30天)</view>
+    <view wx:if="{{ecWeight}}">
+      <view class="chart-card">
+        <ec-canvas id="weightChart" canvas-id="weightChart" ec="{{ecWeight}}" width="680" height="360"></ec-canvas>
+      </view>
+    </view>
+    <view wx:elif="{{!loading}}" class="empty-state">
+      <text class="empty-icon">📈</text>
+      <text class="empty-text">暂无体重数据</text>
+    </view>
+
+    <!-- Exercise Type Stats -->
+    <view class="section-title">📋 训练动作统计</view>
+    <view wx:if="{{exerciseTypes.length > 0}}" class="ex-list">
+      <view wx:for="{{exerciseTypes}}" wx:key="name" class="ex-row">
+        <text class="ex-name">{{item.name}}</text>
+        <text class="ex-count">{{item.count}}次</text>
+        <view class="ex-bar">
+          <view class="ex-bar-fill" style="width: {{item.count / exerciseTypes[0].count * 100}}%;"></view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无训练记录</text>
+    </view>
+
+    <!-- Videos -->
+    <view class="section-title">🎬 B站教学视频</view>
+    <view wx:if="{{videos.length > 0}}" class="video-list">
+      <view wx:for="{{videos}}" wx:key="bvid" class="video-card">
+        <image wx:if="{{item.pic}}" src="{{item.pic}}" class="video-pic" mode="aspectFill" />
+        <view class="video-info">
+          <text class="video-title">{{item.title}}</text>
+          <text class="video-author">{{item.owner && item.owner.name || ''}}</text>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">🎬</text>
+      <text class="empty-text">暂无视频推荐</text>
+    </view>
+  </block>
+</view>

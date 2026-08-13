@@ -1,0 +1,174 @@
+<view class="theme-{{_theme}} container">
+  <!-- Login / Register -->
+  <view wx:if="{{!loggedIn}}" class="login-box">
+    <view class="title">FitAI</view>
+    <view class="subtitle">{{showRegister ? '创建新账号' : '你的私人教练'}}</view>
+    <input class="input" value="{{username}}" placeholder="用户名" bindinput="onUsername"/>
+    <input class="input" password="{{true}}" value="{{password}}" placeholder="密码" bindinput="onPassword"/>
+    <input wx:if="{{showRegister}}" class="input" password="{{true}}" value="{{confirmPassword}}" placeholder="确认密码" bindinput="onConfirmPassword"/>
+    <button wx:if="{{!showRegister}}" class="btn" bindtap="doLogin" loading="{{loading}}">登录</button>
+    <button wx:if="{{showRegister}}" class="btn" bindtap="doRegister" loading="{{loading}}">注册</button>
+    <button class="btn wechat-btn" bindtap="doWechatLogin">微信一键登录</button>
+    <text wx:if="{{error}}" class="error">{{error}}</text>
+    <view class="login-switch" bindtap="toggleAuthMode">
+      <text>{{showRegister ? '已有账号？去登录' : '没有账号？去注册'}}</text>
+    </view>
+  </view>
+
+  <!-- Dashboard -->
+  <view wx:if="{{loggedIn}}" class="dashboard">
+
+    <!-- Header -->
+    <view class="d-header">
+      <view class="dh-greeting">{{greeting}}</view>
+    </view>
+    <view class="d-sub">你好{{userName ? '，' + userName : ''}}</view>
+
+    <!-- ═══ Health Rings (Canvas 2D) ═══ -->
+    <view class="rings-section">
+      <view class="rings-header">
+        <text class="rings-title">今日健康</text>
+        <view class="rings-toggle {{ringMode === 'separate' ? 'active' : ''}}" bindtap="toggleRingMode">
+          <text>{{ringMode === 'combined' ? '合并' : '分开'}}</text>
+        </view>
+      </view>
+
+      <!-- Combined: one canvas, 3 concentric arcs -->
+      <view class="rings-canvas-wrap" style="display:{{ringMode === 'combined' ? 'block' : 'none'}};">
+        <canvas type="2d" id="ringsCombinedCanvas" class="rings-canvas rcv-combined"></canvas>
+        <view class="rc-center-text">
+          <text class="rcct-value">{{ringsData.steps.display || '--'}}</text>
+          <text class="rcct-unit">步</text>
+        </view>
+        <view class="rc-bottom-stats">
+          <view class="rcbs-item">
+            <view class="rcbsi-dot" style="background:#f59e4b;"></view>
+            <text class="rcbsi-val">{{ringsData.calories.display || '--'}}</text>
+            <text class="rcbsi-lbl">kcal</text>
+          </view>
+          <view class="rcbs-item">
+            <view class="rcbsi-dot" style="background:#5e9eff;"></view>
+            <text class="rcbsi-val">{{ringsData.sleep.display || '--'}}</text>
+            <text class="rcbsi-lbl">h 睡眠</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- Separate: three canvases side by side -->
+      <view class="rings-separate-wrap" style="display:{{ringMode === 'separate' ? 'flex' : 'none'}};">
+        <view wx:for="{{ringsData.separate}}" wx:key="key" wx:for-item="r" class="rsw-item">
+          <canvas type="2d" id="sepRingCanvas{{index}}" class="rings-canvas rcv-separate"></canvas>
+          <view class="rswi-text">
+            <text class="rswit-value">{{r.display || '--'}}</text>
+            <text class="rswit-label">{{r.label}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ═══ Training Status Bar ═══ -->
+    <view wx:if="{{statusText}}" class="status-bar">
+      <text wx:if="{{streak > 0}}" class="sb-badge">连续 {{streak}} 天</text>
+      <text wx:if="{{missedDays > 0 && streak === 0}}" class="sb-badge warn">缺席 {{missedDays}} 天</text>
+      <text class="sb-text">{{statusText}}</text>
+    </view>
+
+    <!-- ═══ Today's Training ═══ -->
+    <view wx:if="{{todayPlan}}" class="hero-card">
+      <view class="hc-bar"></view>
+      <view class="hc-body">
+        <view class="hc-label">今日训练</view>
+        <view wx:if="{{!todayPlan.is_rest}}">
+          <view class="hc-focus">{{todayPlan.focus || '训练日'}}</view>
+          <view class="hc-meta">{{todayPlan.day_name}}<text wx:if="{{todayPlan.estimated_time}}"> · {{todayPlan.estimated_time}}</text></view>
+          <view wx:if="{{todayPlan.exercises && todayPlan.exercises.length > 0}}" class="hc-exs">
+            <view wx:for="{{todayPlan.exercises}}" wx:key="name" wx:for-item="ex" class="hc-ex">
+              <text class="hce-name">{{ex.name}}</text>
+              <text class="hce-detail">{{ex.sets}}×{{ex.reps}}</text>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{todayPlan.is_rest}}">
+          <view class="hc-focus rest">休息日</view>
+          <view class="hc-meta">让身体好好恢复</view>
+        </view>
+        <view wx:if="{{todayPlan.tip}}" class="hc-tip">{{todayPlan.tip}}</view>
+      </view>
+    </view>
+
+    <!-- Empty State -->
+    <view wx:if="{{!todayPlan}}" class="hero-card empty">
+      <view class="hc-bar"></view>
+      <view class="hc-body empty-body">
+        <view class="empty-circle"></view>
+        <view class="empty-title">还没有训练计划</view>
+        <view class="empty-desc">和教练聊聊天，几分钟就能帮你定好方向</view>
+        <view class="empty-actions">
+          <button class="ea-btn primary" bindtap="goPlanChat">定制训练计划</button>
+          <button class="ea-btn" bindtap="goChat">找教练聊聊</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- ═══ Weekly Summary ═══ -->
+    <view wx:if="{{weeklySummary}}" class="weekly-summary">
+      <text class="ws-label">本周</text>
+      <view class="ws-chips">
+        <text wx:if="{{weeklySummary.workout_count}}" class="ws-chip green">训练 {{weeklySummary.workout_count}}次</text>
+        <text wx:if="{{weeklySummary.steps && weeklySummary.steps.avg}}" class="ws-chip blue">日均 {{weeklySummary.steps.avg}}步</text>
+        <text wx:if="{{weeklySummary.sleep && weeklySummary.sleep.avg}}" class="ws-chip purple">睡眠 {{weeklySummary.sleep.avg}}h</text>
+        <text wx:if="{{weeklySummary.weight_change}}" class="ws-chip {{weeklySummary.weight_change < 0 ? 'green' : 'orange'}}">体重{{weeklySummary.weight_change < 0 ? '↓' : '↑'}}{{weeklySummary.weight_change < 0 ? -weeklySummary.weight_change : weeklySummary.weight_change}}kg</text>
+      </view>
+    </view>
+
+    <!-- ═══ Quick Record ═══ -->
+    <view class="quick-row">
+      <view wx:for="{{quickTypes}}" wx:key="type" wx:for-item="qt" class="qr-chip" data-idx="{{index}}" bindtap="onQuickTap">
+        <view class="qr-icon-wrap">
+          <view wx:if="{{qt.type === 'water'}}" class="qr-icon-css water"><view class="water-line"></view></view>
+          <view wx:if="{{qt.type === 'weight'}}" class="qr-icon-css weight"><view class="weight-bar"></view></view>
+          <view wx:if="{{qt.type === 'sleep'}}" class="qr-icon-css sleep"><view class="sleep-z"></view></view>
+        </view>
+        <text class="qr-label">{{qt.label}}</text>
+      </view>
+    </view>
+
+    <!-- ═══ Quick Links ═══ -->
+    <view class="links-grid">
+      <view class="lg-card" bindtap="goPlan">
+        <view class="lg-title">训练计划</view>
+        <view class="lg-sub">查看这几周的计划</view>
+      </view>
+      <view class="lg-card" bindtap="goPose">
+        <view class="lg-title">动作纠正</view>
+        <view class="lg-sub">录一段，看看动作对不对</view>
+      </view>
+    </view>
+    <view class="links-grid" style="margin-top:12rpx;">
+      <view class="lg-card" bindtap="goExerciseLib">
+        <view class="lg-title">动作库</view>
+        <view class="lg-sub">动作不会做？来这看</view>
+      </view>
+      <view class="lg-card" bindtap="goChat">
+        <view class="lg-title">找教练聊聊</view>
+        <view class="lg-sub">问问教练的建议</view>
+      </view>
+    </view>
+
+  </view>
+
+  <!-- ═══ Quick Record Popup ═══ -->
+  <view wx:if="{{showQuickRecord}}" class="qr-popup-overlay" bindtap="closeQuickRecord">
+    <view class="qr-popup" catchtap="">
+      <text class="qrp-title">记录 {{quickLabel}}</text>
+      <view class="qrp-input-row">
+        <input class="qrp-input" type="digit" value="{{quickValue}}" placeholder="输入数值" bindinput="onQuickValue" focus="{{true}}"/>
+        <text class="qrp-unit">{{quickUnit}}</text>
+      </view>
+      <view class="qrp-actions">
+        <button class="qrp-btn cancel" bindtap="closeQuickRecord">取消</button>
+        <button class="qrp-btn confirm" bindtap="submitQuickRecord">确认</button>
+      </view>
+    </view>
+  </view>
+</view>

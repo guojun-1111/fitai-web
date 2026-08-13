@@ -1,0 +1,57 @@
+<view class="tab-bar theme-{{_theme}}">
+  <view
+    wx:for="{{list}}"
+    wx:key="index"
+    class="tab-item {{selected === index ? 'active' : ''}}"
+    data-index="{{index}}"
+    bindtap="switchTab"
+  >
+    <!-- CSS 纯代码图标 -->
+    <view class="tab-icon">
+
+      <!-- 首页：房子 -->
+      <view wx:if="{{index === 0}}" class="icon-house">
+        <view class="house-roof"></view>
+        <view class="house-wall">
+          <view class="house-door"></view>
+        </view>
+      </view>
+
+      <!-- AI 教练：聊天气泡 -->
+      <view wx:if="{{index === 1}}" class="icon-chat">
+        <view class="chat-bubble chat-bubble-back">
+          <view class="chat-dots">
+            <view class="chat-dot"></view>
+            <view class="chat-dot"></view>
+            <view class="chat-dot"></view>
+          </view>
+        </view>
+        <view class="chat-bubble chat-bubble-front">
+          <view class="chat-zap"></view>
+        </view>
+      </view>
+
+      <!-- 健康：心形 + 波形 -->
+      <view wx:if="{{index === 2}}" class="icon-health">
+        <view class="health-pulse">
+          <view class="pulse-bar"></view>
+          <view class="pulse-bar short"></view>
+          <view class="pulse-bar taller"></view>
+          <view class="pulse-bar short"></view>
+          <view class="pulse-bar"></view>
+        </view>
+      </view>
+
+      <!-- 我的：人物 -->
+      <view wx:if="{{index === 3}}" class="icon-profile">
+        <view class="profile-head"></view>
+        <view class="profile-body"></view>
+      </view>
+
+    </view>
+    <text class="tab-text">{{item.text}}</text>
+  </view>
+  <view style="text-align:center;padding:6px 0 12px;font-size:11px;color:var(--text3,#666);line-height:1.8">
+  浙ICP备2026055213号-1X<br/>浙公网安备 33018502002636号
+</view>
+</view>

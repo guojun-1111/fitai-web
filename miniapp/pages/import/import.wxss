@@ -1,0 +1,54 @@
+.container { padding: 24rpx; min-height: 100vh; }
+
+.header { margin-bottom: 32rpx; text-align: center; }
+.title { font-size: 40rpx; font-weight: bold; color: var(--text); display: block; margin-bottom: 8rpx; }
+.desc { font-size: 26rpx; color: var(--text2); }
+
+/* Formats */
+.formats-card { background: var(--surface); border-radius: 16rpx; padding: 24rpx; margin-bottom: 32rpx; }
+.formats-title { font-size: 28rpx; color: var(--text); margin-bottom: 16rpx; display: block; }
+.format-tags { display: flex; flex-wrap: wrap; gap: 12rpx; margin-bottom: 16rpx; }
+.tag {
+  padding: 8rpx 20rpx; background: var(--bg3); color: var(--text2); border-radius: 20rpx;
+  font-size: 22rpx;
+}
+.limit-text { font-size: 22rpx; color: var(--text3); }
+
+/* Upload Area */
+.upload-area {
+  background: var(--surface); border: 2px dashed var(--border); border-radius: 16rpx;
+  padding: 80rpx 24rpx; text-align: center;
+}
+.upload-area:active { border-color: var(--green); background: var(--bg3); }
+.upload-icon { font-size: 72rpx; display: block; margin-bottom: 16rpx; }
+.upload-text { font-size: 32rpx; color: var(--green); display: block; margin-bottom: 8rpx; }
+.upload-hint { font-size: 24rpx; color: var(--text3); }
+
+/* Progress */
+.progress-card { background: var(--surface); border-radius: 16rpx; padding: 32rpx 24rpx; }
+.file-name { font-size: 28rpx; color: var(--text); display: block; }
+.file-size { font-size: 22rpx; color: var(--text2); margin-bottom: 20rpx; display: block; }
+.progress-bar { height: 8rpx; background: var(--border); border-radius: 4rpx; margin-bottom: 12rpx; overflow: hidden; }
+.progress-fill { height: 8rpx; background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: 4rpx; transition: width 0.3s; }
+.progress-text { font-size: 24rpx; color: var(--text2); }
+
+/* Result */
+.result-card { background: var(--surface); border-radius: 16rpx; padding: 40rpx 24rpx; text-align: center; }
+.result-icon { font-size: 64rpx; display: block; margin-bottom: 12rpx; }
+.result-title { font-size: 36rpx; font-weight: bold; color: var(--green); display: block; margin-bottom: 24rpx; }
+.result-stat { margin-bottom: 12rpx; }
+.stat-num { font-size: 48rpx; font-weight: bold; color: var(--blue); }
+.stat-label { font-size: 24rpx; color: var(--text2); margin-left: 8rpx; }
+.btn-back {
+  margin-top: 32rpx; background: var(--green); color: #fff; border-radius: 12rpx;
+  font-size: 28rpx; font-weight: bold; padding: 18rpx 0;
+}
+
+/* Error */
+.error-card {
+  background: linear-gradient(135deg, rgba(248,113,113,0.1), rgba(248,113,113,0.05));
+  border: 1px solid rgba(248,113,113,0.3); border-radius: 16rpx; padding: 40rpx 24rpx; text-align: center;
+}
+.error-icon { font-size: 48rpx; display: block; margin-bottom: 12rpx; }
+.error-text { font-size: 28rpx; color: var(--red); display: block; margin-bottom: 24rpx; }
+.retry-link { font-size: 26rpx; color: var(--blue); text-decoration: underline; }

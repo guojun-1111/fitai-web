@@ -1,0 +1,132 @@
+/* ═══ TabBar Container ═══ */
+.tab-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+  display: flex; justify-content: space-around; align-items: center;
+  height: 100rpx; padding-bottom: env(safe-area-inset-bottom);
+  background: var(--surface);
+  border-top: 0.5px solid var(--border);
+  box-shadow: 0 -2rpx 20rpx rgba(0,0,0,0.08);
+  backdrop-filter: blur(20rpx);
+}
+
+.tab-item {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; position: relative; flex: 1; height: 100rpx;
+  padding-top: 6rpx;
+}
+
+.tab-icon {
+  width: 48rpx; height: 48rpx;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tab-item.active .tab-icon {
+  transform: scale(1.05);
+}
+
+.tab-text {
+  font-size: 20rpx; color: var(--text3); margin-top: 2rpx;
+  transition: color 0.2s;
+}
+.tab-item.active .tab-text {
+  color: var(--green); font-weight: 600;
+}
+
+/* ═══ 首页：房子图标 ═══ */
+.icon-house {
+  width: 40rpx; height: 38rpx; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+}
+.house-roof {
+  width: 0; height: 0;
+  border-left: 20rpx solid transparent;
+  border-right: 20rpx solid transparent;
+  border-bottom: 16rpx solid var(--text3);
+  transition: border-color 0.2s;
+}
+.tab-item.active .house-roof { border-bottom-color: var(--green); }
+.house-wall {
+  width: 28rpx; height: 20rpx; background: var(--text3);
+  border-radius: 0 0 4rpx 4rpx;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.tab-item.active .house-wall { background: var(--green); }
+.house-door {
+  width: 10rpx; height: 12rpx;
+  border: 2rpx solid var(--surface);
+  border-radius: 4rpx 4rpx 0 0;
+  border-bottom: none;
+}
+
+/* ═══ AI 教练：聊天气泡 ═══ */
+.icon-chat {
+  width: 42rpx; height: 36rpx; position: relative;
+}
+.chat-bubble {
+  position: absolute; border-radius: 8rpx;
+  transition: background 0.2s, border-color 0.2s;
+}
+.chat-bubble-back {
+  width: 28rpx; height: 20rpx; top: 0; left: 4rpx;
+  background: var(--bg2); border: 2rpx solid var(--text3);
+}
+.chat-bubble-front {
+  width: 34rpx; height: 22rpx; bottom: 0; right: 0;
+  background: var(--text3); border: 2rpx solid var(--text3);
+  display: flex; align-items: center; justify-content: center;
+}
+.tab-item.active .chat-bubble-front { background: var(--green); border-color: var(--green); }
+.tab-item.active .chat-bubble-back { border-color: var(--green); }
+
+.chat-dots {
+  display: flex; gap: 3rpx; padding: 0 6rpx;
+}
+.chat-dot {
+  width: 4rpx; height: 4rpx; border-radius: 50%;
+  background: var(--text3);
+}
+.tab-item.active .chat-dot { background: var(--green); }
+
+.chat-zap {
+  width: 4rpx; height: 14rpx; background: var(--surface);
+  border-radius: 2rpx;
+  transform: rotate(12deg);
+}
+.tab-item.active .chat-zap { background: #fff; }
+
+/* ═══ 健康：波形 ═══ */
+.icon-health {
+  width: 40rpx; height: 34rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+.health-pulse {
+  display: flex; align-items: flex-end; gap: 4rpx; height: 28rpx;
+}
+.pulse-bar {
+  width: 5rpx; border-radius: 3rpx;
+  background: var(--text3); height: 14rpx;
+  transition: background 0.2s;
+}
+.pulse-bar.short { height: 10rpx; }
+.pulse-bar.taller { height: 26rpx; }
+.tab-item.active .pulse-bar { background: var(--green); }
+
+/* ═══ 我的：人物 ═══ */
+.icon-profile {
+  width: 34rpx; height: 38rpx;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-end;
+}
+.profile-head {
+  width: 16rpx; height: 16rpx; border: 3rpx solid var(--text3);
+  border-radius: 50%; margin-bottom: 2rpx;
+  transition: border-color 0.2s;
+}
+.tab-item.active .profile-head { border-color: var(--green); }
+.profile-body {
+  width: 28rpx; height: 16rpx; background: var(--text3);
+  border-radius: 14rpx 14rpx 0 0;
+  transition: background 0.2s;
+}
+.tab-item.active .profile-body { background: var(--green); }

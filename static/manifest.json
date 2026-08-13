@@ -1,0 +1,24 @@
+{
+  "name": "FitAI - 智能运动健康助手",
+  "short_name": "FitAI",
+  "description": "AI-powered fitness coach with training tracking, health data analysis, and personalized recommendations",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#f5f5f7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["health", "fitness", "lifestyle"],
+  "lang": "zh-CN"
+}

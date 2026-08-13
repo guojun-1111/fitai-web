@@ -1,0 +1,114 @@
+<view class="theme-{{_theme}} container">
+  <view class="page-header">
+    <text class="title">动作库</text>
+    <text class="subtitle">1,324 个标准健身动作</text>
+  </view>
+
+  <!-- Search -->
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索动作名..." value="{{search}}" bindinput="onSearch"/>
+  </view>
+
+  <!-- Category Filters -->
+  <scroll-view scroll-x class="filter-row">
+    <view wx:for="{{categories}}" wx:key="value"
+      class="filter-chip {{category === item.value ? 'active' : ''}}"
+      data-type="category" data-value="{{item.value}}" bindtap="onFilterTap"
+    >{{item.label}}</view>
+  </scroll-view>
+
+  <!-- Equipment Filters -->
+  <scroll-view scroll-x class="filter-row">
+    <view wx:for="{{equipments}}" wx:key="value"
+      class="filter-chip {{equipment === item.value ? 'active' : ''}}"
+      data-type="equipment" data-value="{{item.value}}" bindtap="onFilterTap"
+    >{{item.label}}</view>
+  </scroll-view>
+
+  <!-- Difficulty Filters -->
+  <scroll-view scroll-x class="filter-row">
+    <view wx:for="{{difficulties}}" wx:key="value"
+      class="filter-chip {{difficulty === item.value ? 'active' : ''}}"
+      data-type="difficulty" data-value="{{item.value}}" bindtap="onFilterTap"
+    >{{item.label}}</view>
+  </scroll-view>
+
+  <!-- Results -->
+  <text class="result-count" wx:if="{{exercises.length > 0}}">共 {{total || exercises.length}} 个动作</text>
+
+  <view wx:if="{{exercises.length > 0}}" class="ex-grid">
+    <view wx:for="{{exercises}}" wx:key="id" class="ex-card" data-index="{{index}}" bindtap="onExerciseTap">
+      <!-- V36: GIF 动图（ExerciseDB CDN） -->
+      <view class="ex-img-wrap">
+        <image wx:if="{{item.image_url}}"
+          class="ex-img" src="{{item.image_url}}" mode="aspectFill"
+          lazy-load="{{true}}"/>
+        <view wx:else class="ex-img-placeholder">
+          <text class="ex-ph-icon">{{item.body_part === 'chest' ? '🏋️' : item.body_part === 'back' ? '🔙' : item.body_part === 'shoulders' ? '🙆' : item.body_part === 'upper arms' ? '💪' : item.body_part === 'upper legs' ? '🦵' : item.body_part === 'waist' ? '🧘' : '🏃'}}</text>
+        </view>
+      </view>
+      <!-- Name (Chinese preferred) -->
+      <text class="ex-card-name">{{item.name_zh || item.name}}</text>
+      <!-- Tags -->
+      <view class="ex-card-tags">
+        <text wx:if="{{item.body_part || item.category}}" class="ex-tag badge-green">{{item.body_part || item.category}}</text>
+        <text wx:if="{{item.equipment}}" class="ex-tag badge-blue">{{item.equipment}}</text>
+      </view>
+      <!-- Difficulty stars -->
+      <view wx:if="{{item.difficulty_level || item.difficulty}}" class="ex-difficulty">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this"
+          style="color: {{s <= (item.difficulty_level || item.difficulty) ? '#f5a623' : 'var(--border)'}}">★</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{exercises.length === 0 && !loading}}" class="empty-state">
+    <text class="empty-icon">🔍</text>
+    <text class="empty-text">没有匹配的动作</text>
+  </view>
+
+  <view wx:if="{{hasMore && exercises.length > 0}}" class="load-more" bindtap="loadMore">
+    <text wx:if="{{!loading}}">加载更多</text>
+    <text wx:else>加载中...</text>
+  </view>
+  <view wx:if="{{!hasMore && exercises.length > 0}}" class="load-end">
+    <text>— 已加载全部 —</text>
+  </view>
+
+  <!-- ═══ V36: Detail Popup ═══ -->
+  <view wx:if="{{showDetail && detailExercise}}" class="detail-overlay" bindtap="closeDetail">
+    <view class="detail-sheet" catchtap="preventBubble">
+      <!-- Close -->
+      <view class="ds-close" bindtap="closeDetail"><text>✕</text></view>
+
+      <!-- Big GIF image -->
+      <view class="ds-img-wrap">
+        <image wx:if="{{detailExercise.image_url}}"
+          class="ds-img" src="{{detailExercise.image_url}}" mode="aspectFit"/>
+        <view wx:else class="ds-img-placeholder">
+          <text class="ds-ph-icon">{{detailExercise.body_part === 'chest' ? '🏋️' : detailExercise.body_part === 'back' ? '🔙' : detailExercise.body_part === 'shoulders' ? '🙆' : '💪'}}</text>
+        </view>
+      </view>
+
+      <!-- Names -->
+      <text class="ds-name">{{detailExercise.name_zh || detailExercise.name}}</text>
+      <text class="ds-name-en">{{detailExercise.name}}</text>
+
+      <!-- Meta -->
+      <view class="ds-meta">
+        <text class="ds-meta-tag">{{detailExercise.body_part || detailExercise.category || '--'}}</text>
+        <text class="ds-meta-tag">{{detailExercise.equipment || '--'}}</text>
+        <text class="ds-meta-tag">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this"
+            style="color: {{s <= (detailExercise.difficulty_level || detailExercise.difficulty || 3) ? '#f5a623' : '#444'}}">★</text>
+        </text>
+      </view>
+
+      <!-- Instructions (Chinese) -->
+      <view wx:if="{{detailExercise.instructions_zh}}" class="ds-instructions">
+        <text class="ds-inst-label">动作指导</text>
+        <text class="ds-inst-text">{{detailExercise.instructions_zh}}</text>
+      </view>
+    </view>
+  </view>
+</view>

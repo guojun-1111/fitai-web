@@ -1,0 +1,95 @@
+{
+  "app": {
+    "name": "FitAI-Web",
+    "tagline": "基于因果推断的 AI 健身教练"
+  },
+  "nav": {
+    "home": "首页",
+    "chat": "AI 教练",
+    "health": "健康数据",
+    "exercises": "训练动作",
+    "dashboard": "数据面板",
+    "insights": "因果洞察",
+    "plan": "训练计划",
+    "profile": "个人资料",
+    "settings": "设置",
+    "import": "导入数据"
+  },
+  "home": {
+    "greeting": "早上好",
+    "greeting_afternoon": "下午好",
+    "greeting_evening": "晚上好",
+    "recovery_score": "恢复评分",
+    "training_load": "训练负荷",
+    "sleep_quality": "睡眠质量",
+    "ai_suggestion": "AI 教练建议",
+    "today_workout": "今日训练",
+    "weekly_summary": "本周概要",
+    "no_data": "暂无数据，开始导入你的健康数据吧"
+  },
+  "chat": {
+    "placeholder": "向你的 AI 教练提问...",
+    "sending": "发送中...",
+    "thinking": "思考中...",
+    "steps_collapsed": "{count} 个 Agent 步骤",
+    "suggestions": "你可能会想问...",
+    "plan_mode": "计划模式"
+  },
+  "health": {
+    "heart_rate": "心率",
+    "steps": "步数",
+    "sleep": "睡眠",
+    "weight": "体重",
+    "resting_hr": "静息心率",
+    "hrv": "心率变异性",
+    "date_range": "日期范围",
+    "moving_average": "移动平均",
+    "export": "导出数据"
+  },
+  "pose": {
+    "start": "开始检测",
+    "stop": "停止",
+    "exercise": "训练动作",
+    "squat": "深蹲",
+    "pushup": "俯卧撑",
+    "plank": "平板支撑",
+    "lunge": "箭步蹲",
+    "ytw": "YTW 肩部",
+    "rep_count": "次数",
+    "form_score": "动作评分",
+    "fatigue": "疲劳度"
+  },
+  "insights": {
+    "causal_graph": "因果图",
+    "counterfactual": "假如分析",
+    "anomalies": "异常检测",
+    "trends": "趋势分析",
+    "correlation": "相关性"
+  },
+  "settings": {
+    "language": "语言",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "system": "跟随系统",
+    "coach_style": "教练风格",
+    "units": "单位制",
+    "metric": "公制",
+    "imperial": "英制"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "loading": "加载中...",
+    "error": "出了点问题",
+    "retry": "重试",
+    "confirm": "确认",
+    "search": "搜索",
+    "no_results": "暂无结果",
+    "back": "返回",
+    "next": "下一步",
+    "done": "完成"
+  }
+}

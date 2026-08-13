@@ -1,0 +1,47 @@
+.container { padding: 16rpx 24rpx; min-height: 100vh; }
+
+.page-header { padding: 8rpx 0 16rpx; }
+.page-header .title { font-size: 40rpx; font-weight: bold; color: var(--green); }
+
+.loading-box { text-align: center; padding: 120rpx 0; }
+.loading-text { color: var(--text3); font-size: 28rpx; }
+
+.section-title { font-size: 30rpx; font-weight: bold; color: var(--text); margin: 24rpx 0 12rpx; }
+
+.chart-card {
+  background: var(--surface); border-radius: 16rpx; padding: 12rpx 4rpx;
+  margin-bottom: 8rpx;
+}
+
+/* Stats Grid */
+.stats-grid { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.stat-card {
+  width: calc(50% - 8rpx); background: var(--surface); border-radius: 20rpx;
+  padding: 20rpx; text-align: center; box-sizing: border-box;
+  box-shadow: var(--card-shadow); border: 1rpx solid var(--border-light);
+}
+.stat-icon { font-size: 32rpx; display: block; margin-bottom: 6rpx; }
+.stat-val { font-size: 44rpx; font-weight: bold; display: block; }
+.stat-label { font-size: 22rpx; color: var(--text2); margin-top: 4rpx; display: block; }
+.text-green { color: var(--green); }
+.text-blue { color: var(--blue); }
+.text-orange { color: var(--orange); }
+.text-purple { color: var(--purple); }
+
+/* Ranking */
+.rank-list { display: flex; flex-direction: column; gap: 10rpx; }
+.rank-row { display: flex; align-items: center; gap: 14rpx; background: var(--surface); border-radius: 12rpx; padding: 16rpx 20rpx; }
+.rank-badge {
+  width: 48rpx; height: 48rpx; border-radius: 50%; display: flex;
+  align-items: center; justify-content: center; font-size: 24rpx; font-weight: bold;
+}
+.rank-badge.rank-top { background: var(--green); color: #fff; }
+.rank-badge.rank-normal { background: var(--bg3); color: var(--text2); }
+.rank-info { flex: 1; display: flex; flex-direction: column; gap: 4rpx; }
+.rank-name { font-size: 28rpx; color: var(--text); font-weight: bold; }
+.rank-detail { font-size: 22rpx; color: var(--text3); }
+.rank-medal { font-size: 36rpx; }
+
+.empty-state { display: flex; flex-direction: column; align-items: center; padding: 80rpx 0; color: var(--text3); }
+.empty-icon { font-size: 64rpx; margin-bottom: 12rpx; }
+.empty-text { font-size: 26rpx; }

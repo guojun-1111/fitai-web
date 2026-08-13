@@ -1,0 +1,166 @@
+<view class="theme-{{_theme}} container page-enter">
+  <view class="page-header">
+    <text class="title">训练计划</text>
+    <view wx:if="{{plan}}" class="header-action" bindtap="goRegenerate">
+      <text class="ha-link">重新制定</text>
+    </view>
+  </view>
+
+  <!-- Loading skeleton -->
+  <view wx:if="{{loading}}">
+    <view class="skeleton" style="height:120rpx;margin-bottom:16rpx;border-radius:20rpx;"></view>
+    <view wx:for="{{[1,2,3,4,5,6,7]}}" wx:key="*this" class="skeleton" style="height:140rpx;margin-bottom:12rpx;border-radius:16rpx;"></view>
+  </view>
+
+  <!-- Error state -->
+  <view wx:elif="{{error}}" class="error-box">
+    <text class="error-icon">😵</text>
+    <text class="error-text">{{error}}</text>
+    <view class="retry-btn" bindtap="loadPlan">重新加载</view>
+  </view>
+
+  <!-- Empty state -->
+  <view wx:elif="{{!plan}}" class="empty-state">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">还没有训练计划</text>
+    <text class="empty-text" style="font-size:24rpx;margin-top:4rpx;">完成新手引导来生成专属计划</text>
+    <button class="empty-cta" bindtap="goRegenerate">定制训练计划</button>
+  </view>
+
+  <!-- Plan content -->
+  <block wx:if="{{plan}}">
+    <!-- Plan header -->
+    <view class="plan-header card">
+      <view class="plan-meta">
+        <text class="plan-goal">🎯 {{plan.goal || '训练计划'}}</text>
+        <text class="plan-freq">📅 每周 {{plan.frequency || '--'}} 天</text>
+      </view>
+      <view class="plan-stats">
+        <view class="plan-stat-item">
+          <text class="plan-stat-val text-green">{{completedDays}}</text>
+          <text class="plan-stat-lbl">已完成</text>
+        </view>
+        <view class="plan-stat-item">
+          <text class="plan-stat-val text-blue">{{remainingDays}}</text>
+          <text class="plan-stat-lbl">剩余</text>
+        </view>
+        <view class="plan-stat-item">
+          <text class="plan-stat-val text-orange">{{plan.totalWeeks || '1'}}</text>
+          <text class="plan-stat-lbl">总周数</text>
+        </view>
+      </view>
+      <!-- Progress bar -->
+      <view class="plan-progress-bar">
+        <view class="ppb-fill" style="width: {{totalDays > 0 ? (completedDays / totalDays * 100) : 0}}%;"></view>
+      </view>
+    </view>
+
+    <!-- Status bar -->
+    <view wx:if="{{plan}}" class="status-bar">
+      <view class="sb-item">
+        <text class="sb-val">{{plan.streak || 0}}</text>
+        <text class="sb-lbl">连续训练</text>
+      </view>
+      <view class="sb-divider"></view>
+      <view class="sb-item">
+        <text class="sb-val">{{completedDays}}/{{totalDays || 7}}</text>
+        <text class="sb-lbl">本周进度</text>
+      </view>
+      <view class="sb-divider"></view>
+      <view class="sb-item">
+        <text class="sb-val">{{plan.createdAt ? plan.createdAt.substr(0, 10) : '--'}}</text>
+        <text class="sb-lbl">生效日期</text>
+      </view>
+    </view>
+
+    <!-- Week selector -->
+    <view wx:if="{{weeks.length > 1}}" class="week-scroll">
+      <scroll-view scroll-x class="week-tabs">
+        <view
+          wx:for="{{weeks}}"
+          wx:key="week"
+          class="week-tab {{currentWeek === item.week ? 'active' : ''}}"
+          data-week="{{item.week}}"
+          bindtap="onWeekTap"
+        >第{{item.week}}周</view>
+      </scroll-view>
+    </view>
+
+    <!-- Day cards -->
+    <view class="section-title">{{currentWeekLabel}}</view>
+
+    <view wx:for="{{currentDays}}" wx:key="day" class="day-card card">
+      <!-- Day header (always visible) -->
+      <view class="day-head" data-index="{{index}}" bindtap="toggleDayExpand">
+        <view class="day-left">
+          <text class="day-name">{{item.day_name}}</text>
+          <text class="day-focus-text">{{item.focus || '全身训练'}}{{item.total_time ? ' · ' + item.total_time : ''}}</text>
+        </view>
+        <view class="day-right">
+          <view wx:if="{{item.is_rest}}" class="day-badge rest">休息日</view>
+          <view wx:elif="{{item.completed}}" class="day-badge done">✓ 已完成</view>
+          <view wx:else class="day-badge pending">待完成</view>
+          <text wx:if="{{!item.is_rest}}" class="expand-arrow {{expandedDayIndex === index ? 'open' : ''}}">▾</text>
+        </view>
+      </view>
+
+      <!-- Expanded body (collapsible for training days) -->
+      <view wx:if="{{!item.is_rest && expandedDayIndex === index}}" class="day-body">
+        <!-- Warmup -->
+        <view wx:if="{{item.warmup && item.warmup.length > 0}}" class="ex-section">
+          <text class="ex-section-title">🔥 热身</text>
+          <view wx:for="{{item.warmup}}" wx:key="name" wx:for-item="ex" class="ex-row">
+            <view class="ex-info">
+              <text class="ex-name">{{ex.name}}</text>
+              <text wx:if="{{ex.why}}" class="ex-why">{{ex.why}}</text>
+            </view>
+            <text class="ex-detail">{{ex.duration || ''}}</text>
+          </view>
+        </view>
+
+        <!-- Main exercises -->
+        <view wx:if="{{item.main && item.main.length > 0}}" class="ex-section">
+          <text class="ex-section-title">💪 正式训练</text>
+          <view wx:for="{{item.main}}" wx:key="name" wx:for-item="ex" class="ex-row">
+            <view class="ex-info">
+              <text class="ex-name">{{ex.name}}</text>
+              <text wx:if="{{ex.tip}}" class="ex-why">{{ex.tip}}</text>
+            </view>
+            <text class="ex-detail">{{ex.sets}}组 × {{ex.reps}}</text>
+          </view>
+        </view>
+
+        <!-- Cooldown -->
+        <view wx:if="{{item.cooldown && item.cooldown.length > 0}}" class="ex-section">
+          <text class="ex-section-title">🧘 拉伸</text>
+          <view wx:for="{{item.cooldown}}" wx:key="name" wx:for-item="ex" class="ex-row">
+            <view class="ex-info">
+              <text class="ex-name">{{ex.name}}</text>
+              <text wx:if="{{ex.why}}" class="ex-why">{{ex.why}}</text>
+            </view>
+            <text class="ex-detail">{{ex.duration || ''}}</text>
+          </view>
+        </view>
+
+        <view wx:if="{{item.tip}}" class="day-tip">💡 {{item.tip}}</view>
+      </view>
+
+      <!-- Rest day message -->
+      <view wx:if="{{item.is_rest && expandedDayIndex === index}}" class="day-rest">
+        <text>{{item.tip || '今天是休息日，做个轻松散步或拉伸，让身体好好恢复'}}</text>
+      </view>
+
+      <!-- Complete button -->
+      <view wx:if="{{!item.is_rest && !item.completed}}" class="day-action">
+        <button class="complete-btn" data-index="{{index}}" bindtap="markComplete">✓ 标记完成</button>
+      </view>
+    </view>
+
+    <!-- AI Insight module -->
+    <view wx:if="{{plan.explanation || plan.futureProjection}}" class="insight-card card">
+      <text class="ic-title">💡 教练洞察</text>
+      <text wx:if="{{plan.explanation}}" class="ic-text">{{plan.explanation}}</text>
+      <text wx:if="{{plan.futureProjection}}" class="ic-future">{{plan.futureProjection}}</text>
+    </view>
+  </block>
+</view>

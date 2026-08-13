@@ -1,0 +1,98 @@
+<view class="theme-{{_theme}} container">
+  <!-- Period Selector -->
+  <view class="period-bar">
+    <view
+      wx:for="{{periods}}"
+      wx:key="value"
+      class="period-tag {{period === item.value ? 'active' : ''}}"
+      data-period="{{item.value}}"
+      bindtap="onPeriodTap"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- Loading skeleton -->
+  <view wx:if="{{loading}}">
+    <view class="skeleton" style="height:48rpx;margin-bottom:16rpx;border-radius:40rpx;"></view>
+    <view class="card-grid">
+      <view wx:for="{{[1,2,3,4,5,6,7,8]}}" wx:key="*this" class="skeleton" style="width:calc(50% - 10rpx);height:140rpx;border-radius:20rpx;margin-bottom:10rpx;"></view>
+    </view>
+  </view>
+
+  <!-- Metric Cards Grid -->
+  <view wx:if="{{!loading}}" class="card-grid">
+    <view
+      wx:for="{{cards}}"
+      wx:key="key"
+      class="metric-card"
+      style="border-left: 3px solid {{item.color}};"
+      data-key="{{item.key}}"
+      bindtap="onCardTap"
+    >
+      <view class="card-header">
+        <text class="card-icon">{{item.icon}}</text>
+        <text class="card-label">{{item.label}}</text>
+      </view>
+      <view class="card-body">
+        <text class="card-value" style="color: {{item.color}};">{{item.value}}</text>
+        <text class="card-unit">{{item.unit}}</text>
+      </view>
+      <view class="card-footer">
+        <text wx:if="{{item.trend === 'up'}}" class="trend up">↑ 上升</text>
+        <text wx:elif="{{item.trend === 'down'}}" class="trend down">↓ 下降</text>
+        <text wx:elif="{{item.trend === 'flat'}}" class="trend flat">→ 持平</text>
+        <text class="card-count">{{item.count}}条记录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Detail Overlay -->
+  <view wx:if="{{showDetail}}" class="detail-overlay">
+    <view class="detail-panel">
+      <view class="detail-header">
+        <text class="detail-title">{{detailMetric.icon}} {{detailMetric.label}}</text>
+        <text class="detail-close" bindtap="closeDetail">✕</text>
+      </view>
+
+      <!-- Detail Stats -->
+      <view class="detail-stats">
+        <view class="stat-item">
+          <text class="stat-val">{{detailAvg}}</text>
+          <text class="stat-lbl">平均值</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-val">{{detailMax}}</text>
+          <text class="stat-lbl">最高</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-val">{{detailMin}}</text>
+          <text class="stat-lbl">最低</text>
+        </view>
+      </view>
+
+      <!-- Detail Period -->
+      <view class="period-bar small">
+        <view
+          wx:for="{{periods}}"
+          wx:key="value"
+          class="period-tag {{detailPeriod === item.value ? 'active' : ''}}"
+          data-period="{{item.value}}"
+          bindtap="onDetailPeriodTap"
+        >{{item.label}}</view>
+      </view>
+
+      <!-- ECharts Chart -->
+      <view class="chart-wrap" wx:if="{{ecDetail}}">
+        <ec-canvas id="healthChart" canvas-id="healthChart" ec="{{ecDetail}}" width="680" height="400"></ec-canvas>
+      </view>
+
+      <!-- Data Table -->
+      <scroll-view scroll-y class="detail-table">
+        <view wx:for="{{detailData}}" wx:key="date" class="table-row">
+          <text class="table-date">{{item.date}}</text>
+          <text class="table-val" style="color: {{detailMetric.color}};">{{item.value}} {{item.unit}}</text>
+        </view>
+        <view wx:if="{{detailData.length === 0}}" class="empty-text">暂无数据</view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

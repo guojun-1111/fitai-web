@@ -1,0 +1,76 @@
+<view class="theme-{{_theme}} container">
+  <view class="page-header">
+    <text class="title">运动分析</text>
+  </view>
+
+  <!-- Loading skeleton -->
+  <view wx:if="{{loading}}">
+    <view class="stats-grid">
+      <view class="skeleton" style="width:calc(50% - 8rpx);height:120rpx;border-radius:20rpx;"></view>
+      <view class="skeleton" style="width:calc(50% - 8rpx);height:120rpx;border-radius:20rpx;"></view>
+      <view class="skeleton" style="width:calc(50% - 8rpx);height:120rpx;border-radius:20rpx;"></view>
+      <view class="skeleton" style="width:calc(50% - 8rpx);height:120rpx;border-radius:20rpx;"></view>
+    </view>
+    <view class="skeleton" style="height:400rpx;border-radius:20rpx;margin-top:16rpx;"></view>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <!-- Stats Grid -->
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-icon">🏃</text>
+        <text class="stat-val text-blue">{{stats.total_workouts}}</text>
+        <text class="stat-label">总运动次数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-icon">⏱️</text>
+        <text class="stat-val text-green">{{stats.total_minutes}}</text>
+        <text class="stat-label">总时长 (分钟)</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-icon">🔥</text>
+        <text class="stat-val text-orange">{{stats.total_calories}}</text>
+        <text class="stat-label">总消耗 (kcal)</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-icon">🎯</text>
+        <text class="stat-val text-purple">{{stats.type_count}}</text>
+        <text class="stat-label">运动种类</text>
+      </view>
+    </view>
+
+    <!-- Exercise Type Pie Chart -->
+    <view class="section-title">🎯 运动类型分布</view>
+    <view wx:if="{{ecPie}}">
+      <view class="chart-card">
+        <ec-canvas id="pieChart" canvas-id="pieChart" ec="{{ecPie}}" width="680" height="400"></ec-canvas>
+      </view>
+    </view>
+    <view wx:elif="{{!loading && typeRanking.length === 0}}" class="empty-state">
+      <text class="empty-icon">🏋️</text>
+      <text class="empty-text">开始记录你的训练吧</text>
+    </view>
+
+    <!-- Exercise Type Ranking -->
+    <view class="section-title">📋 运动类型排行</view>
+    <view wx:if="{{typeRanking.length > 0}}" class="rank-list">
+      <view wx:for="{{typeRanking}}" wx:key="name" class="rank-row">
+        <view class="rank-badge rank-{{index < 3 ? 'top' : 'normal'}}">
+          <text>{{index + 1}}</text>
+        </view>
+        <view class="rank-info">
+          <text class="rank-name">{{item.name || item.exercise_type || item.type}}</text>
+          <text class="rank-detail">
+            共 {{item.count || item.total_sets || 0}} 次
+            <block wx:if="{{item.total_reps}}">· {{item.total_reps}} reps</block>
+          </text>
+        </view>
+        <view wx:if="{{index < 3}}" class="rank-medal">{{index === 0 ? '🥇' : (index === 1 ? '🥈' : '🥉')}}</view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text class="empty-icon">🏋️</text>
+      <text class="empty-text">开始记录你的训练吧</text>
+    </view>
+  </block>
+</view>

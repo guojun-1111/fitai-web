@@ -1,0 +1,95 @@
+{
+  "app": {
+    "name": "FitAI-Web",
+    "tagline": "AI Fitness Coach with Causal Health Intelligence"
+  },
+  "nav": {
+    "home": "Home",
+    "chat": "AI Coach",
+    "health": "Health Data",
+    "exercises": "Exercises",
+    "dashboard": "Dashboard",
+    "insights": "Insights",
+    "plan": "Training Plan",
+    "profile": "Profile",
+    "settings": "Settings",
+    "import": "Import Data"
+  },
+  "home": {
+    "greeting": "Good morning",
+    "greeting_afternoon": "Good afternoon",
+    "greeting_evening": "Good evening",
+    "recovery_score": "Recovery Score",
+    "training_load": "Training Load",
+    "sleep_quality": "Sleep Quality",
+    "ai_suggestion": "AI Coach Suggestion",
+    "today_workout": "Today's Workout",
+    "weekly_summary": "Weekly Summary",
+    "no_data": "No data yet. Start by importing your health data."
+  },
+  "chat": {
+    "placeholder": "Ask your AI coach anything...",
+    "sending": "Sending...",
+    "thinking": "Thinking...",
+    "steps_collapsed": "{count} agent steps",
+    "suggestions": "You might want to ask...",
+    "plan_mode": "Plan Mode"
+  },
+  "health": {
+    "heart_rate": "Heart Rate",
+    "steps": "Steps",
+    "sleep": "Sleep",
+    "weight": "Weight",
+    "resting_hr": "Resting Heart Rate",
+    "hrv": "Heart Rate Variability",
+    "date_range": "Date Range",
+    "moving_average": "Moving Average",
+    "export": "Export Data"
+  },
+  "pose": {
+    "start": "Start Detection",
+    "stop": "Stop",
+    "exercise": "Exercise",
+    "squat": "Squat",
+    "pushup": "Push-up",
+    "plank": "Plank",
+    "lunge": "Lunge",
+    "ytw": "YTW",
+    "rep_count": "Reps",
+    "form_score": "Form Score",
+    "fatigue": "Fatigue Level"
+  },
+  "insights": {
+    "causal_graph": "Causal Graph",
+    "counterfactual": "What If",
+    "anomalies": "Anomalies",
+    "trends": "Trends",
+    "correlation": "Correlation"
+  },
+  "settings": {
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "coach_style": "Coach Style",
+    "units": "Units",
+    "metric": "Metric",
+    "imperial": "Imperial"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "confirm": "Confirm",
+    "search": "Search",
+    "no_results": "No results found",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done"
+  }
+}

@@ -1,0 +1,59 @@
+<view class="theme-{{_theme}} container">
+  <view class="header">
+    <text class="title">导入健康数据</text>
+    <text class="desc">支持从 Apple Health、Google Fit、华为健康等导出的数据文件</text>
+  </view>
+
+  <!-- Supported Formats -->
+  <view class="formats-card">
+    <text class="formats-title">支持的文件格式</text>
+    <view class="format-tags">
+      <text class="tag">XML (Apple Health)</text>
+      <text class="tag">CSV (华为/Google)</text>
+      <text class="tag">JSON</text>
+      <text class="tag">ZIP</text>
+      <text class="tag">TCX (Garmin)</text>
+      <text class="tag">GPX (GPS)</text>
+    </view>
+    <text class="limit-text">单文件最大 50MB</text>
+  </view>
+
+  <!-- Upload Area -->
+  <view wx:if="{{!uploading && !jobResult}}" class="upload-area" bindtap="chooseFile">
+    <text class="upload-icon">📁</text>
+    <text class="upload-text">点击选择文件</text>
+    <text class="upload-hint">从微信聊天记录中选择</text>
+  </view>
+
+  <!-- Upload Progress -->
+  <view wx:if="{{uploading}}" class="progress-card">
+    <text class="file-name">{{fileName}}</text>
+    <text class="file-size">{{fileSize}}</text>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{uploadProgress}}%;"></view>
+    </view>
+    <text class="progress-text">{{uploadProgress}}% — {{jobStatus}}</text>
+  </view>
+
+  <!-- Result -->
+  <view wx:if="{{jobResult}}" class="result-card">
+    <text class="result-icon">✅</text>
+    <text class="result-title">导入完成</text>
+    <view wx:if="{{jobResult.records_imported}}" class="result-stat">
+      <text class="stat-num">{{jobResult.records_imported || 0}}</text>
+      <text class="stat-label">条记录已导入</text>
+    </view>
+    <view wx:if="{{jobResult.workouts_imported}}" class="result-stat">
+      <text class="stat-num">{{jobResult.workouts_imported || 0}}</text>
+      <text class="stat-label">条运动记录</text>
+    </view>
+    <button class="btn-back" bindtap="goBack">返回</button>
+  </view>
+
+  <!-- Error -->
+  <view wx:if="{{error}}" class="error-card">
+    <text class="error-icon">❌</text>
+    <text class="error-text">{{error}}</text>
+    <text class="retry-link" bindtap="chooseFile">重新选择文件</text>
+  </view>
+</view>

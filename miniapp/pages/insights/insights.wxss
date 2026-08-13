@@ -1,0 +1,54 @@
+.container { padding: 16rpx 24rpx; min-height: 100vh; }
+
+.page-header { padding: 8rpx 0 8rpx; }
+.page-header .title { font-size: 40rpx; font-weight: bold; color: var(--green); display: block; }
+.subtitle { font-size: 26rpx; color: var(--text3); margin-top: 4rpx; display: block; }
+
+.loading-box { text-align: center; padding: 160rpx 0; }
+.loading-text { color: var(--text3); font-size: 28rpx; }
+
+/* Tab Nav */
+.tab-nav { display: flex; gap: 8rpx; padding: 20rpx 0 16rpx; }
+.tab-btn {
+  flex: 1; text-align: center; padding: 14rpx 0; border-radius: 12rpx;
+  font-size: 24rpx; background: var(--surface); color: var(--text2);
+  border: 1px solid var(--border);
+}
+.tab-btn.active { background: var(--green-dim); color: var(--green); border-color: var(--green); }
+
+.tab-content { padding-top: 8rpx; }
+
+/* Causal Graph Edges */
+.graph-info { display: flex; flex-direction: column; gap: 10rpx; }
+.edge-card {
+  display: flex; align-items: center; gap: 12rpx; background: var(--surface);
+  border-radius: 12rpx; padding: 18rpx 20rpx;
+}
+.edge-var { font-size: 28rpx; font-weight: bold; }
+.edge-arrow { font-size: 28rpx; color: var(--text3); }
+.edge-effect { flex: 1; text-align: right; }
+.edge-effect .text2 { font-size: 24rpx; color: var(--text2); }
+
+/* Insight Cards */
+.insight-card {
+  display: flex; gap: 14rpx; align-items: flex-start;
+  background: var(--surface); border-radius: 14rpx; padding: 20rpx 22rpx; margin-bottom: 12rpx;
+}
+.insight-rank {
+  width: 48rpx; height: 48rpx; border-radius: 50%; background: var(--green);
+  color: #fff; font-size: 24rpx; font-weight: bold;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.insight-icon { font-size: 36rpx; flex-shrink: 0; width: 48rpx; text-align: center; }
+.insight-medal { font-size: 36rpx; flex-shrink: 0; }
+.insight-body { flex: 1; display: flex; flex-direction: column; gap: 6rpx; }
+.insight-title { font-size: 28rpx; color: var(--text); font-weight: bold; }
+.insight-detail { font-size: 24rpx; color: var(--text2); }
+.text-blue { color: var(--blue); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text2 { color: var(--text2); }
+
+.empty-state { display: flex; flex-direction: column; align-items: center; padding: 60rpx 0; color: var(--text3); }
+.empty-icon { font-size: 64rpx; margin-bottom: 12rpx; }
+.empty-text { font-size: 26rpx; }

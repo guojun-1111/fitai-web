@@ -1,0 +1,22 @@
+# FitAI 桌面健康机器人 — Python 依赖
+# 安装在树莓派 / 核心板的 Linux 环境上
+
+# 姿态检测（核心）
+mediapipe>=0.10.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# 屏幕渲染（PyGame 可选，headless 模式不需要）
+pygame>=2.5.0
+
+# 语音合成
+# Edge-TTS（在线，效果好，推荐）
+edge-tts>=6.1.0
+# pyttsx3（离线，备选）
+# pyttsx3>=2.90
+
+# 串口通信（与 ESP32）
+pyserial>=3.5
+
+# HTTP 同步（stdlib urllib 可用，如需更好错误处理可装 requests）
+requests>=2.31.0

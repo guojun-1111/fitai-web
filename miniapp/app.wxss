@@ -1,0 +1,314 @@
+/* ============================================================
+   FitAI 小程序 — 主题系统（与 web 版 style.css 对齐）
+   支持 dark / light / morning 三主题
+   通过根 view 的 .theme-xxx class 切换
+   ============================================================ */
+
+/* 默认：深色主题 */
+page {
+  font-size: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background-color: #1a1714;  /* 暗色默认，防止 overscroll 白底 */
+}
+
+.theme-dark {
+  --bg: #1a1714;
+  --bg2: #211e1a;
+  --bg3: #282520;
+  --surface: rgba(45,42,36,0.85);
+  --surface-solid: #2d2a24;
+  --border: rgba(58,53,48,0.6);
+  --border-light: rgba(255,255,255,0.04);
+  --text: #e8e4dd;
+  --text2: #a09888;
+  --text3: #6b6358;
+  --green: #3dd68c;
+  --green-dim: #1e3a2f;
+  --blue: #5e9eff;
+  --blue-dim: #1a2d4a;
+  --orange: #f59e4b;
+  --orange-dim: #2d2015;
+  --red: #f87171;
+  --purple: #8a2be2;
+  --purple-dim: rgba(138,43,226,0.12);
+  --brand: #f97316;
+  --ring-track: #1e1e28;
+  --card-shadow: 0 2rpx 16rpx rgba(0,0,0,0.3), 0 0 0 1rpx rgba(255,255,255,0.03) inset;
+  --card-shadow-hover: 0 4rpx 24rpx rgba(0,0,0,0.4), 0 0 0 1rpx rgba(255,255,255,0.05) inset;
+  --gradient-start: #1a1714;
+  --gradient-end: #211e1a;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.theme-light {
+  --bg: #f5f5f7;
+  --bg2: #eeeef0;
+  --bg3: #e4e4e6;
+  --surface: rgba(255,255,255,0.9);
+  --surface-solid: #ffffff;
+  --border: rgba(0,0,0,0.06);
+  --border-light: rgba(0,0,0,0.03);
+  --text: #1d1d1f;
+  --text2: #6e6e73;
+  --text3: #86868b;
+  --green: #22c55e;
+  --green-dim: #dcfce7;
+  --blue: #3b82f6;
+  --blue-dim: #dbeafe;
+  --orange: #f59e4b;
+  --orange-dim: #fef3c7;
+  --red: #ef4444;
+  --purple: #8a2be2;
+  --purple-dim: rgba(138,43,226,0.08);
+  --brand: #f97316;
+  --ring-track: #e5e5ea;
+  --card-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06), 0 0 0 1rpx rgba(0,0,0,0.03) inset;
+  --card-shadow-hover: 0 4rpx 20rpx rgba(0,0,0,0.1), 0 0 0 1rpx rgba(0,0,0,0.04) inset;
+  --gradient-start: #f5f5f7;
+  --gradient-end: #eeeef0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.theme-morning {
+  --bg: #fef9ef;
+  --bg2: #fef3c7;
+  --bg3: #fde68a;
+  --surface: rgba(255,251,235,0.9);
+  --surface-solid: #fffbeb;
+  --border: rgba(0,0,0,0.08);
+  --border-light: rgba(0,0,0,0.04);
+  --text: #78350f;
+  --text2: #92400e;
+  --text3: #a16207;
+  --green: #16a34a;
+  --green-dim: #dcfce7;
+  --blue: #2563eb;
+  --blue-dim: #dbeafe;
+  --orange: #d97706;
+  --orange-dim: #fef3c7;
+  --red: #dc2626;
+  --purple: #8a2be2;
+  --purple-dim: rgba(138,43,226,0.12);
+  --brand: #f97316;
+  --ring-track: #f5e6c8;
+  --card-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05), 0 0 0 1rpx rgba(139,92,38,0.06) inset;
+  --card-shadow-hover: 0 4rpx 20rpx rgba(0,0,0,0.08), 0 0 0 1rpx rgba(139,92,38,0.08) inset;
+  --gradient-start: #fef9ef;
+  --gradient-end: #fef3c7;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ===== 全局工具类 ===== */
+.container {
+  padding: 20rpx;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* 通用卡片 — V23 升级：多层阴影 + 半透明 + 微边框 */
+.card {
+  background: var(--surface);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: var(--card-shadow);
+  border: 1rpx solid var(--border-light);
+  transition: all 0.2s;
+}
+
+/* 通用 section 标题 */
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 16rpx;
+}
+
+/* 通用按钮 */
+.btn-primary {
+  background: var(--green);
+  color: #fff;
+  border-radius: 12rpx;
+  font-weight: bold;
+}
+.btn-outline {
+  background: var(--surface);
+  color: var(--text2);
+  border: 1px solid var(--border);
+  border-radius: 12rpx;
+}
+.btn-danger {
+  background: var(--red);
+  color: #fff;
+  border-radius: 12rpx;
+}
+
+/* 输入框 */
+.input {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12rpx;
+  padding: 20rpx;
+  color: var(--text);
+  font-size: 28rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+  color: var(--text3);
+}
+.empty-icon { font-size: 72rpx; margin-bottom: 16rpx; }
+.empty-text { font-size: 28rpx; margin-bottom: 20rpx; }
+
+/* 徽章 */
+.badge {
+  display: inline-block;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+}
+.badge-green  { background: var(--green-dim); color: var(--green); }
+.badge-blue   { background: var(--blue-dim); color: var(--blue); }
+.badge-orange { background: var(--orange-dim); color: var(--orange); }
+
+/* 颜色快捷类 */
+.text-green  { color: var(--green); }
+.text-blue   { color: var(--blue); }
+.text-orange { color: var(--orange); }
+.text-red    { color: var(--red); }
+.text2 { color: var(--text2); }
+.text3 { color: var(--text3); }
+
+/* 分割线 */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20rpx 0;
+}
+
+/* tab 子导航 */
+.subnav {
+  display: flex;
+  gap: 12rpx;
+  padding: 16rpx 0;
+  white-space: nowrap;
+}
+.subnav-btn {
+  padding: 12rpx 24rpx;
+  border-radius: 20rpx;
+  font-size: 26rpx;
+  background: var(--surface);
+  color: var(--text2);
+  border: 1px solid var(--border);
+}
+.subnav-btn.active {
+  background: var(--green-dim);
+  color: var(--green);
+  border-color: var(--green);
+}
+
+/* page 统一 header */
+.page-header {
+  padding: 20rpx 0;
+}
+.page-header .title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: var(--green);
+}
+
+/* ===== V23 新增：增强卡片深度 ===== */
+
+/* 统计卡片（用于 dashboard/health/exercises 的 stat-card） */
+.stat-card {
+  background: var(--surface);
+  border-radius: 20rpx;
+  padding: 20rpx;
+  text-align: center;
+  box-sizing: border-box;
+  box-shadow: var(--card-shadow);
+  border: 1rpx solid var(--border-light);
+  transition: all 0.2s;
+}
+
+/* 指标卡片（health 页面的 metric-card） */
+.metric-card {
+  background: var(--surface);
+  border-radius: 20rpx;
+  padding: 20rpx 18rpx;
+  box-sizing: border-box;
+  box-shadow: var(--card-shadow);
+  border: 1rpx solid var(--border-light);
+  transition: all 0.2s;
+}
+
+/* 图表容器 */
+.chart-card {
+  background: var(--surface);
+  border-radius: 20rpx;
+  padding: 12rpx 4rpx;
+  margin-bottom: 8rpx;
+  box-shadow: var(--card-shadow);
+  border: 1rpx solid var(--border-light);
+}
+
+/* 骨架屏加载 */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg2) 25%, var(--bg3) 50%, var(--bg2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8rpx;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 页面淡入动画 */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(16rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageFadeIn 0.35s ease-out;
+}
+
+/* 加载状态 */
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+.loading-text { color: var(--text3); font-size: 28rpx; }
+
+/* 错误重试 */
+.error-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+}
+.error-box .error-icon { font-size: 64rpx; margin-bottom: 12rpx; }
+.error-box .error-text { font-size: 28rpx; color: var(--text2); margin-bottom: 24rpx; }
+.retry-btn {
+  padding: 16rpx 48rpx;
+  background: var(--green);
+  color: #fff;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+/* 页面切换时 page 元素保持不透明，防止旧页面内容透出。
+   各页面 .container 上有独立的 pageIn 动画。 */

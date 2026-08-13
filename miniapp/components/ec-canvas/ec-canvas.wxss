@@ -1,0 +1,7 @@
+.ec-container {
+  display: inline-block;
+}
+.ec-canvas {
+  width: 100%;
+  height: 100%;
+}

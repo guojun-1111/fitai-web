@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-ver="16.0">
+<head>
+<meta charset="UTF-8">
+<base href="/">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>(function(){var ua=navigator.userAgent;if(/iPhone|iPad|iPod/.test(ua)&&/Safari/.test(ua)&&!/CriOS/.test(ua)&&!/MicroMessenger/.test(ua)&&!/QQ\//.test(ua)){document.documentElement.setAttribute('data-browser','safari');}})()</script>
+<script>(function(){var v=window.innerHeight*0.01;document.documentElement.style.setProperty('--vh',v+'px');})()</script>
+<title>FitAI — 你的私人 AI 健身教练</title>
+<meta name="description" content="FitAI 是懂因果的 AI 健身教练：健康数据全景、智能训练计划、拍照识别食物，以及学术级的个性化健康洞察。">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --text: #1d1d1f;
+  --text-2: #86868b;
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --card-border: #d2d2d7;
+  --green: #34c759;
+  --orange: #ff9500;
+  --pink: #ff2d55;
+  --purple: #af52de;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Nav ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.nav-inner {
+  max-width: 980px; margin: 0 auto; padding: 0 22px;
+  height: 52px; display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+.nav-logo:hover { text-decoration: none; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a { font-size: 13px; color: var(--text); opacity: 0.85; }
+.nav-links a:hover { opacity: 1; text-decoration: none; }
+.nav-cta {
+  font-size: 13px; background: var(--accent); color: #fff !important;
+  padding: 7px 16px; border-radius: 980px; opacity: 1 !important;
+}
+.nav-cta:hover { background: var(--accent-hover); }
+@media (max-width: 640px) {
+  .nav-links a:not(.nav-cta) { display: none; }
+  .section { padding: 80px 16px; }
+  .footer-cta { padding: 80px 16px; }
+  .hero { padding-top: 100px; }
+}
+
+/* ── Shared ── */
+.section { padding: 120px 22px; }
+.section.alt { background: var(--bg-alt); }
+.container { max-width: 980px; margin: 0 auto; }
+.eyebrow {
+  font-size: 19px; font-weight: 600; color: var(--accent);
+  margin-bottom: 12px; letter-spacing: -0.01em;
+}
+.h2 {
+  font-size: clamp(30px, 5vw, 48px); font-weight: 700;
+  letter-spacing: -0.02em; line-height: 1.12; margin-bottom: 20px;
+}
+.lead { font-size: clamp(17px, 2.2vw, 21px); color: var(--text-2); max-width: 640px; line-height: 1.6; }
+.center { text-align: center; }
+.center .lead { margin-left: auto; margin-right: auto; }
+
+/* fade-up animation */
+.fade-up {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { opacity: 1; transform: none; transition: none; }
+  .rings { animation: none !important; }
+}
+
+/* ── Hero ── */
+.hero { padding: 180px 22px 100px; text-align: center; }
+.hero-title {
+  font-size: clamp(40px, 8vw, 80px); font-weight: 700;
+  letter-spacing: -0.025em; line-height: 1.06; margin-bottom: 24px;
+}
+.hero-sub {
+  font-size: clamp(18px, 2.5vw, 24px); color: var(--text-2);
+  max-width: 600px; margin: 0 auto 36px; line-height: 1.5;
+}
+.hero-ctas { display: flex; gap: 24px; justify-content: center; align-items: center; margin-bottom: 80px; }
+.btn-primary {
+  display: inline-block; background: var(--accent); color: #fff;
+  font-size: 17px; font-weight: 500; padding: 14px 32px; border-radius: 980px;
+  transition: background 0.2s;
+}
+.btn-primary:hover { background: var(--accent-hover); text-decoration: none; }
+.btn-link { font-size: 17px; }
+.btn-link::after { content: " ›"; }
+
+/* Activity rings — pure CSS, Apple Watch style */
+.rings-wrap { display: flex; justify-content: center; }
+.rings {
+  position: relative; width: 240px; height: 240px;
+  animation: ringFloat 6s ease-in-out infinite;
+}
+@keyframes ringFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.ring {
+  position: absolute; border-radius: 50%;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 15px), #000 calc(100% - 14px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 15px), #000 calc(100% - 14px));
+}
+.ring-1 { inset: 0; background: conic-gradient(var(--pink) 0deg 290deg, rgba(255,45,85,0.15) 290deg 360deg); }
+.ring-2 { inset: 34px; background: conic-gradient(var(--green) 0deg 245deg, rgba(52,199,89,0.15) 245deg 360deg); }
+.ring-3 { inset: 68px; background: conic-gradient(var(--accent) 0deg 200deg, rgba(0,113,227,0.15) 200deg 360deg); }
+.rings-label {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 2px;
+}
+.rings-label strong { font-size: 15px; font-weight: 600; }
+.rings-label span { font-size: 12px; color: var(--text-2); }
+
+/* ── Steps ── */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 64px; }
+.step { text-align: center; }
+.step-num {
+  width: 56px; height: 56px; margin: 0 auto 20px;
+  border-radius: 50%; background: var(--accent); color: #fff;
+  font-size: 22px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.step h3 { font-size: 21px; font-weight: 600; margin-bottom: 10px; }
+.step p { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+@media (max-width: 734px) { .steps { grid-template-columns: 1fr; gap: 48px; } }
+
+/* ── Features ── */
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 64px; }
+.feature-card {
+  background: var(--bg); border-radius: 18px; padding: 44px 36px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+.feature-icon { font-size: 40px; margin-bottom: 20px; display: block; }
+.feature-card h3 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; }
+.feature-card p { font-size: 15px; color: var(--text-2); line-height: 1.65; }
+@media (max-width: 734px) { .feature-grid { grid-template-columns: 1fr; } }
+
+/* ── Innovation ── */
+.inno-list { margin-top: 72px; display: flex; flex-direction: column; gap: 72px; }
+.inno-item {
+  display: grid; grid-template-columns: 1fr 1.4fr; gap: 48px; align-items: center;
+}
+.inno-item:nth-child(even) { direction: rtl; }
+.inno-item:nth-child(even) > * { direction: ltr; }
+.inno-badge {
+  background: var(--bg); border-radius: 18px; border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  padding: 40px 32px; text-align: center;
+}
+.inno-badge .big { font-size: 44px; font-weight: 700; letter-spacing: -0.02em; display: block; margin-bottom: 8px; }
+.inno-badge .big.c1 { color: var(--accent); }
+.inno-badge .big.c2 { color: var(--green); }
+.inno-badge .big.c3 { color: var(--purple); }
+.inno-badge .small { font-size: 13px; color: var(--text-2); }
+.inno-text h3 { font-size: 26px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 14px; }
+.inno-text p { font-size: 16px; color: var(--text-2); line-height: 1.7; margin-bottom: 10px; }
+.inno-text .tech { font-size: 13px; color: var(--text-2); opacity: 0.8; font-family: "SF Mono", ui-monospace, Menlo, monospace; }
+@media (max-width: 734px) {
+  .inno-item { grid-template-columns: 1fr; gap: 24px; }
+  .inno-item:nth-child(even) { direction: ltr; }
+}
+
+/* ── Ecosystem ── */
+.eco-tags {
+  display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 48px;
+}
+.eco-tag {
+  background: var(--bg); border: 1px solid var(--card-border);
+  border-radius: 980px; padding: 12px 24px;
+  font-size: 15px; font-weight: 500; color: var(--text);
+}
+
+/* ── Privacy ── */
+.privacy-icon { font-size: 48px; margin-bottom: 24px; }
+
+/* ── Screenshots ── */
+.shot-hero { margin-top: 64px; }
+.shot-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+.shot-phones { display: flex; justify-content: center; gap: 40px; margin-top: 64px; flex-wrap: wrap; }
+.shot-browser {
+  background: #fff; border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.10);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.shot-browser:hover { transform: translateY(-4px); box-shadow: 0 20px 56px rgba(0,0,0,0.14); }
+.shot-browser .bar {
+  height: 32px; background: #f5f5f7; display: flex; align-items: center;
+  gap: 6px; padding: 0 12px; border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.shot-browser .bar i { width: 10px; height: 10px; border-radius: 50%; background: #d2d2d7; }
+.shot-browser img { width: 100%; height: auto; display: block; }
+.shot-phone {
+  width: 260px; border-radius: 40px; overflow: hidden;
+  border: 8px solid #1d1d1f; background: #1d1d1f;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.16);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.shot-phone:hover { transform: translateY(-4px); box-shadow: 0 24px 64px rgba(0,0,0,0.20); }
+.shot-phone img { width: 100%; height: auto; display: block; border-radius: 32px; }
+.shot-cap { text-align: center; font-size: 15px; color: var(--text-2); margin-top: 16px; line-height: 1.5; }
+.shot-item { display: flex; flex-direction: column; }
+.shot-item .shot-cap { margin-top: auto; padding-top: 16px; }
+@media (max-width: 734px) {
+  .shot-row { grid-template-columns: 1fr; }
+  .shot-phones { flex-direction: column; align-items: center; gap: 24px; margin-top: 40px; }
+  .shot-phone { max-width: 260px; }
+  .shot-hero { margin-top: 40px; }
+}
+
+/* ── Footer CTA ── */
+.footer-cta { padding: 140px 22px; text-align: center; background: var(--bg-alt); }
+.footer-cta .h2 { margin-bottom: 32px; }
+.footer {
+  padding: 32px 22px; text-align: center;
+  font-size: 13px; color: var(--text-2);
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/">FitAI</a>
+    <div class="nav-links">
+      <a href="#screens">界面</a>
+      <a href="#features">功能</a>
+      <a href="#innovation">创新</a>
+      <a href="#start">上手</a>
+      <a class="nav-cta" href="/login">开始使用</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <h1 class="hero-title">你的私人<br>AI 健身教练</h1>
+  <p class="hero-sub">从数据到因果，真正懂你的健康。<br>不只是记录，而是告诉你「为什么」和「怎么办」。</p>
+  <div class="hero-ctas">
+    <a class="btn-primary" href="/login">免费开始</a>
+    <a class="btn-link" href="#features">了解更多</a>
+  </div>
+  <div class="rings-wrap">
+    <div class="rings">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="ring ring-3"></div>
+      <div class="rings-label">
+        <strong>今日概览</strong>
+        <span>步数 · 睡眠 · 卡路里</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 3 Steps -->
+<section class="section" id="start">
+  <div class="container center">
+    <p class="eyebrow fade-up">三步上手</p>
+    <h2 class="h2 fade-up">一分钟，开始用。</h2>
+    <div class="steps">
+      <div class="step fade-up">
+        <div class="step-num">1</div>
+        <h3>注册账号</h3>
+        <p>30 秒完成注册。网页、手机浏览器、微信小程序，数据全打通。</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">2</div>
+        <h3>导入或记录数据</h3>
+        <p>一键导入 Apple Health、华为运动健康数据，也可以手动记录睡眠、体重、饮水。</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">3</div>
+        <h3>直接问 AI</h3>
+        <p>「今天练什么？」「帮我分析睡眠」——像跟教练聊天一样简单。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Screenshots -->
+<section class="section alt" id="screens">
+  <div class="container">
+    <div class="center">
+      <p class="eyebrow fade-up">界面实拍</p>
+      <h2 class="h2 fade-up">先看看，再上手。</h2>
+      <p class="lead fade-up">真实界面，不讲故事。注册后你看到的就是这些。</p>
+    </div>
+    <div class="shot-hero fade-up">
+      <div class="shot-browser">
+        <div class="bar"><i></i><i></i><i></i></div>
+        <img src="/img/shot-dashboard.webp" width="1600" height="1000"
+             alt="FitAI 数据仪表盘：体重变化趋势、训练频率分布与「如果」推演器" loading="lazy">
+      </div>
+      <p class="shot-cap">数据仪表盘 — 体重趋势、训练频率，以及「如果每天多睡一小时会怎样」推演器</p>
+    </div>
+    <div class="shot-row">
+      <div class="shot-item fade-up">
+        <div class="shot-browser">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <img src="/img/shot-health.webp" width="1600" height="1000"
+               alt="健康数据面板：步数、心率、睡眠、卡路里等 8 项指标趋势图" loading="lazy">
+        </div>
+        <p class="shot-cap">健康数据 — 8 项指标趋势，一眼看清身体变化</p>
+      </div>
+      <div class="shot-item fade-up">
+        <div class="shot-browser">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <img src="/img/shot-insights.webp" width="1600" height="1000"
+               alt="因果洞察面板：自动发现健康指标间的因果关系与未来 7 天预测" loading="lazy">
+        </div>
+        <p class="shot-cap">因果洞察 — 不只是数据，告诉你「为什么」</p>
+      </div>
+      <div class="shot-item fade-up">
+        <div class="shot-browser">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <img src="/img/shot-chat.webp" width="1600" height="1000"
+               alt="AI 教练对话：根据你的训练和睡眠数据给出个性化建议" loading="lazy">
+        </div>
+        <p class="shot-cap">AI 教练 — 问一句话，它去查你 90 天的数据</p>
+      </div>
+    </div>
+    <div class="shot-phones">
+      <div class="shot-item fade-up">
+        <div class="shot-phone">
+          <img src="/img/shot-m-home.webp" width="780" height="1688"
+               alt="手机端首页：Apple Watch 风格的活动圆环，步数、卡路里、睡眠" loading="lazy">
+        </div>
+        <p class="shot-cap">手机浏览器直接用，也可以「添加到主屏幕」当 App</p>
+      </div>
+      <div class="shot-item fade-up">
+        <div class="shot-phone">
+          <img src="/img/shot-m-chat.webp" width="780" height="1688"
+               alt="手机端 AI 对话：随时随地问你的私人教练" loading="lazy">
+        </div>
+        <p class="shot-cap">口袋里随时问 — 手机端体验与电脑一致</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section alt" id="features">
+  <div class="container">
+    <div class="center">
+      <p class="eyebrow fade-up">功能</p>
+      <h2 class="h2 fade-up">一个教练该做的，<br>它都会。</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card fade-up">
+        <span class="feature-icon">🤖</span>
+        <h3>AI 教练对话</h3>
+        <p>24 小时在线的私人教练，掌握 22 种专业工具。训练安排、饮食建议、动作教学，随时问，秒级回答。还能语音通话、拍照识别食物热量。</p>
+      </div>
+      <div class="feature-card fade-up">
+        <span class="feature-icon">📊</span>
+        <h3>健康数据全景</h3>
+        <p>步数、心率、睡眠、卡路里、体重、体脂、血压、血糖——8 项指标的趋势图表，缩放、均线、钻取明细，一眼看清身体变化。</p>
+      </div>
+      <div class="feature-card fade-up">
+        <span class="feature-icon">🎯</span>
+        <h3>智能训练计划</h3>
+        <p>AI 根据你的目标和身体数据生成个性化训练计划，精确到每天的每个动作。完成打卡，持续进阶。</p>
+      </div>
+      <div class="feature-card fade-up">
+        <span class="feature-icon">📈</span>
+        <h3>「如果」模拟器</h3>
+        <p>如果每天多睡一小时会怎样？如果步数翻倍呢？What-If 反事实引擎基于你自己的数据，模拟改变带来的结果。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Innovation -->
+<section class="section" id="innovation">
+  <div class="container">
+    <div class="center">
+      <p class="eyebrow fade-up">创新</p>
+      <h2 class="h2 fade-up">别的 App 告诉你「是什么」，<br>FitAI 告诉你「为什么」。</h2>
+      <p class="lead fade-up">三个来自学术研究的算法引擎，把健康数据从「记录」变成「洞察」。</p>
+    </div>
+    <div class="inno-list">
+      <div class="inno-item fade-up">
+        <div class="inno-badge">
+          <span class="big c1">因果</span>
+          <span class="small">不只是相关</span>
+        </div>
+        <div class="inno-text">
+          <h3>发现健康指标之间的因果链</h3>
+          <p>普通 App 说「你睡眠不足」。FitAI 说「睡眠不足导致你第二天静息心率升高 6%」——从你的数据中自动发现睡眠、心率、运动之间的因果关系，让每条建议都有据可依。</p>
+          <p class="tech">PC-stable 因果发现算法 · 学术论文级实现</p>
+        </div>
+      </div>
+      <div class="inno-item fade-up">
+        <div class="inno-badge">
+          <span class="big c2">恢复</span>
+          <span class="small">跟自己比，不跟平均值比</span>
+        </div>
+        <div class="inno-text">
+          <h3>只属于你的恢复分数</h3>
+          <p>今天适合高强度训练还是该休息？FitAI 的恢复分数是跟「你自己的历史」比，而不是套用人群平均值——你的身体，只有你自己说了算。</p>
+          <p class="tech">贝叶斯分层模型 · 部分池化个性化估计</p>
+        </div>
+      </div>
+      <div class="inno-item fade-up">
+        <div class="inno-badge">
+          <span class="big c3">预警</span>
+          <span class="small">真正异常才提醒</span>
+        </div>
+        <div class="inno-text">
+          <h3>不再误报的健康预警</h3>
+          <p>偶尔熬夜心率偏高，不等于出问题了。FitAI 用统计检验过滤噪音，只有统计意义上真正异常时才提醒你——训练过度、状态突变，第一时间发现。</p>
+          <p class="tech">Fisher 组合检验 + FDR 多重校正 · 变点检测</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Ecosystem -->
+<section class="section alt">
+  <div class="container center">
+    <p class="eyebrow fade-up">数据生态</p>
+    <h2 class="h2 fade-up">已有的数据，<br>直接带过来。</h2>
+    <p class="lead fade-up">不用重新开始。导出文件一键导入，几年历史数据全保留。</p>
+    <div class="eco-tags fade-up">
+      <span class="eco-tag"> Apple Health</span>
+      <span class="eco-tag">🟢 华为运动健康</span>
+      <span class="eco-tag">🔵 Google Fit</span>
+      <span class="eco-tag">⚫ Fitbit</span>
+      <span class="eco-tag">🔺 Garmin (TCX)</span>
+      <span class="eco-tag">📍 GPX 轨迹</span>
+    </div>
+  </div>
+</section>
+
+<!-- Privacy -->
+<section class="section">
+  <div class="container center">
+    <div class="privacy-icon fade-up">🔒</div>
+    <h2 class="h2 fade-up">你的健康数据，<br>只属于你。</h2>
+    <p class="lead fade-up">每个账号数据完全隔离，密码行业级加密存储，支持一键导出全部数据。没有广告，不出售数据。</p>
+  </div>
+</section>
+
+<!-- Footer CTA -->
+<section class="footer-cta">
+  <div class="container">
+    <h2 class="h2 fade-up">现在开始，<br>让数据为你工作。</h2>
+    <a class="btn-primary fade-up" href="/login">免费开始</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>FitAI — 智能运动健康助手 · 网页 / 小程序 / PWA 全平台</p>
+  <p class="footer-legal">
+    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">浙ICP备2026055213号-2</a>
+    <span style="margin:0 8px"></span>
+    <img src="/img/beian.png" style="height:14px;vertical-align:middle" alt="">
+    <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33018502002636" target="_blank" rel="noopener">浙公网安备 33018502002636号</a>
+  </p>
+</footer>
+
+<script>
+(function() {
+  var els = document.querySelectorAll('.fade-up');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function(el) { el.classList.add('visible'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  els.forEach(function(el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>
