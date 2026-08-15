@@ -13,7 +13,10 @@ from auth.utils import is_registration_allowed
 router = APIRouter(tags=["dashboard"])
 
 
-@router.get("/api/dashboard/workout")
+@router.get("/api/dashboard/workout",
+            summary="Get workout dashboard data",
+            description="Return workout history, duration, streak for the number of days.",
+)
 async def dashboard_workout(request: Request, days: int = 1):
     days = validate_days(days)
     user_id = getattr(request.state, "user_id", None)
@@ -31,7 +34,10 @@ async def dashboard_workout(request: Request, days: int = 1):
     return result
 
 
-@router.get("/api/dashboard/metrics")
+@router.get("/api/dashboard/metrics",
+            summary="Get body metrics and workout data",
+            description="Return body metric and workout history.",
+            )
 async def dashboard_metrics(request: Request, days: int = 90):
     days = validate_days(days)
     user_id = getattr(request.state, "user_id", None)
@@ -48,7 +54,11 @@ async def dashboard_metrics(request: Request, days: int = 90):
     return result
 
 
-@router.get("/api/stats")
+@router.get(
+        "/api/stats",
+        summary="Get fitness statistics",
+        description="Return workout, body metric, and nutrition history for requested number of days.",
+        )
 async def stats(request: Request, days: int = 7):
     days = validate_days(days)
     user_id = getattr(request.state, "user_id", None)
@@ -65,7 +75,11 @@ async def stats(request: Request, days: int = 7):
     return result
 
 
-@router.get("/api/dashboard/health")
+@router.get(
+        "/api/dashboard/health",
+        summary="Get health data",
+        description="Return health data of the requested type for the requested number of days.",
+        )
 async def dashboard_health(request: Request, data_type: str = "steps", days: int = 7):
     days = validate_days(days)
     user_id = await get_user_id(request)
@@ -85,7 +99,11 @@ async def dashboard_health(request: Request, data_type: str = "steps", days: int
     return result
 
 
-@router.get("/api/dashboard/health-batch")
+@router.get(
+    "/api/dashboard/health-batch",
+    summary="Get multiple health data types",
+    description="Return health data for multiple comma-separated data types over the requested number of days.",
+)
 async def dashboard_health_batch(request: Request, types: str = "steps,sleep,calories", days: int = 7):
     days = validate_days(days)
     user_id = await get_user_id(request)
@@ -121,7 +139,12 @@ async def dashboard_health_batch(request: Request, types: str = "steps,sleep,cal
     return result
 
 
-@router.get("/api/dashboard/nutrition")
+
+@router.get(
+    "/api/dashboard/nutrition",
+    summary="Get nutrition history",
+    description="Return nutrition history for the requested number of days.",
+)
 async def dashboard_nutrition(request: Request, days: int = 7):
     days = validate_days(days)
     user_id = await get_user_id(request)
@@ -136,6 +159,10 @@ async def dashboard_nutrition(request: Request, days: int = 7):
     return result
 
 
-@router.get("/api/auth/registration-status")
+@router.get(
+    "/api/auth/registration-status",
+    summary="Get registration status",
+    description="Return whether new user registration is currently allowed.",
+)
 async def registration_status():
     return {"registration_allowed": await is_registration_allowed()}
