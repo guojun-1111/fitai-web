@@ -11,9 +11,11 @@ import base64
 from datetime import date, timedelta
 from pathlib import Path
 
-DB_DIR = Path(__file__).parent.parent / "data"
+from config import DATABASE_PATH
+
+DB_DIR = DATABASE_PATH.parent
 DB_DIR.mkdir(parents=True, exist_ok=True)
-DB_PATH = str(DB_DIR / "fitai.db")
+DB_PATH = str(DATABASE_PATH)
 
 _db_conn = None
 _db_lock = threading.Lock()
@@ -361,7 +363,7 @@ def insert_body_metric(user_id: int, weight_kg=None, body_fat_pct=None, notes=No
     conn = get_db()
     conn.execute(
         "INSERT INTO body_metrics (user_id, date, weight_kg, body_fat_pct, notes) VALUES (?, COALESCE(?, date('now')), ?, ?, ?)",
-        (user_id, date, weight_kg, body_fat_pct, notes),
+        (user_id, date, weight_kg, body_fat_pct, encrypt_field(notes)),
     )
     conn.commit()
     return "已记录体测数据"
@@ -371,7 +373,7 @@ def insert_nutrition(user_id: int, meal_type=None, food_name=None, calories=None
     conn = get_db()
     conn.execute(
         "INSERT INTO nutrition_logs (user_id, date, meal_type, food_name, calories, protein_g, carbs_g, fat_g, notes) VALUES (?, COALESCE(?, date('now')), ?, ?, ?, ?, ?, ?, ?)",
-        (user_id, date, meal_type, food_name, calories, protein_g, carbs_g, fat_g, notes),
+        (user_id, date, meal_type, encrypt_field(food_name), calories, protein_g, carbs_g, fat_g, encrypt_field(notes)),
     )
     conn.commit()
     return f"已记录饮食: {food_name}"
@@ -412,7 +414,7 @@ def get_body_metrics_history(user_id: int, days=30):
         parts = [f"- {r['date']}:"]
         if r['weight_kg']: parts.append(f"体重{r['weight_kg']}kg")
         if r['body_fat_pct']: parts.append(f"体脂率{r['body_fat_pct']}%")
-        if r['notes']: parts.append(f"({r['notes']})")
+        if r['notes']: parts.append(f"({decrypt_field(r['notes'])})")
         lines.append(" ".join(parts))
     return "\n".join(lines)
 
@@ -429,10 +431,10 @@ def get_nutrition_history(user_id: int, days=30):
     for r in rows:
         parts = [f"- {r['date']}:"]
         if r['meal_type']: parts.append(f"[{r['meal_type']}]")
-        parts.append(r['food_name'])
+        parts.append(decrypt_field(r['food_name']))
         if r['calories']: parts.append(f"{r['calories']}千卡")
         if r['protein_g']: parts.append(f"蛋白质{r['protein_g']}g")
-        if r['notes']: parts.append(f"({r['notes']})")
+        if r['notes']: parts.append(f"({decrypt_field(r['notes'])})")
         lines.append(" ".join(parts))
     return "\n".join(lines)
 
@@ -452,7 +454,10 @@ def get_body_metrics_history_json(user_id: int, days=90):
         "SELECT * FROM body_metrics WHERE user_id = ? AND date >= date('now', ?) ORDER BY date ASC",
         (user_id, f"-{days} days"),
     ).fetchall()
-    return [dict(r) for r in rows]
+    result = [dict(r) for r in rows]
+    for r in result:
+        r["notes"] = decrypt_field(r.get("notes", ""))
+    return result
 
 
 def get_nutrition_history_json(user_id: int, days=30):
@@ -461,7 +466,11 @@ def get_nutrition_history_json(user_id: int, days=30):
         "SELECT * FROM nutrition_logs WHERE user_id = ? AND date >= date('now', ?) ORDER BY date ASC",
         (user_id, f"-{days} days"),
     ).fetchall()
-    return [dict(r) for r in rows]
+    result = [dict(r) for r in rows]
+    for r in result:
+        r["food_name"] = decrypt_field(r.get("food_name", ""))
+        r["notes"] = decrypt_field(r.get("notes", ""))
+    return result
 
 
 def get_health_data_history(user_id: int, days=30):
@@ -522,7 +531,12 @@ def get_user_profile(user_id: int) -> dict | None:
     """Return full user_profile row as dict, or None if not found."""
     conn = get_db()
     row = conn.execute("SELECT * FROM user_profile WHERE user_id = ?", (user_id,)).fetchone()
-    return dict(row) if row else None
+    if not row:
+        return None
+    result = dict(row)
+    for k in ("name", "gender", "notes"):
+        result[k] = decrypt_field(result.get(k, ""))
+    return result
 
 
 def get_user_profile_summary(user_id: int) -> str:
@@ -531,9 +545,9 @@ def get_user_profile_summary(user_id: int) -> str:
     if not row:
         return ""
     parts = []
-    if row["name"]: parts.append(f"姓名: {row['name']}")
+    if row["name"]: parts.append(f"姓名: {decrypt_field(row['name'])}")
     if row["birth_year"]: parts.append(f"出生年份: {row['birth_year']}")
-    if row["gender"]: parts.append(f"性别: {row['gender']}")
+    if row["gender"]: parts.append(f"性别: {decrypt_field(row['gender'])}")
     if row["height_cm"]: parts.append(f"身高: {row['height_cm']}cm")
     if row["weight_kg"]: parts.append(f"体重: {row['weight_kg']}kg")
     if row["fitness_goal"]: parts.append(f"健身目标: {row['fitness_goal']}")
@@ -545,7 +559,7 @@ def save_chat_message(user_id: int, session_id: str, role: str, content: str):
     conn = get_db()
     conn.execute(
         "INSERT INTO chat_history (user_id, session_id, role, content) VALUES (?, ?, ?, ?)",
-        (user_id, session_id, role, content),
+        (user_id, session_id, role, encrypt_field(content)),
     )
     conn.commit()
 
@@ -556,7 +570,10 @@ def get_chat_history(user_id: int, session_id: str, limit: int = 50):
         "SELECT * FROM chat_history WHERE user_id = ? AND session_id = ? ORDER BY created_at ASC LIMIT ?",
         (user_id, session_id, limit),
     ).fetchall()
-    return [dict(r) for r in rows]
+    result = [dict(r) for r in rows]
+    for r in result:
+        r["content"] = decrypt_field(r.get("content", ""))
+    return result
 
 
 def list_chat_sessions(user_id: int):
@@ -574,29 +591,20 @@ def delete_chat_session(user_id: int, session_id: str):
     conn.commit()
 
 
-# OAuth token encryption helpers
-_ENCRYPTION_KEY = os.getenv("ENCRYPTION_SECRET_KEY", "")
+# Field encryption (AES-256-GCM via core.crypto). The legacy XOR helpers below
+# exist only to bridge data written before the Phase-3 migration.
+from core.crypto import encrypt_field, decrypt_field
 
-def _derive_key(user_id: int, platform: str) -> bytes:
-    """Derive a per-token encryption key from the master secret."""
-    raw = f"{_ENCRYPTION_KEY}:{user_id}:{platform}".encode("utf-8")
-    return hashlib.sha256(raw).digest()
 
-def _encrypt_token(plaintext: str, user_id: int, platform: str) -> str:
-    """XOR encrypt + base64 encode a token for storage."""
-    if not plaintext:
-        return ""
-    key = _derive_key(user_id, platform)
-    data = plaintext.encode("utf-8")
-    encrypted = bytes(data[i] ^ key[i % len(key)] for i in range(len(data)))
-    return base64.urlsafe_b64encode(encrypted).decode("ascii")
+def _legacy_xor_decrypt(ciphertext: str, user_id: int, platform: str) -> str:
+    """Decrypt tokens written by the pre-Phase-3 XOR scheme (empty master key).
 
-def _decrypt_token(ciphertext: str, user_id: int, platform: str) -> str:
-    """Base64 decode + XOR decrypt a stored token."""
+    Only used as a fallback until scripts/migrate_encrypt.py converts them.
+    """
     if not ciphertext:
         return ""
     try:
-        key = _derive_key(user_id, platform)
+        key = hashlib.sha256(f":{user_id}:{platform}".encode("utf-8")).digest()
         encrypted = base64.urlsafe_b64decode(ciphertext.encode("ascii"))
         decrypted = bytes(encrypted[i] ^ key[i % len(key)] for i in range(len(encrypted)))
         return decrypted.decode("utf-8")
@@ -604,10 +612,19 @@ def _decrypt_token(ciphertext: str, user_id: int, platform: str) -> str:
         return ""
 
 
+def _decrypt_token_compat(ciphertext: str, user_id: int, platform: str) -> str:
+    """Decrypt a stored token: AES-GCM if enc:v1:, else legacy XOR, else plaintext."""
+    if not ciphertext:
+        return ""
+    if ciphertext.startswith("enc:v1:"):
+        return decrypt_field(ciphertext)
+    return _legacy_xor_decrypt(ciphertext, user_id, platform)
+
+
 def save_wechat_session_key(user_id: int, session_key: str):
     """Encrypt and persist WeChat session_key to users table."""
     conn = get_db()
-    encrypted = _encrypt_token(session_key, user_id, "wechat")
+    encrypted = encrypt_field(session_key)
     conn.execute(
         "UPDATE users SET wechat_session_key = ? WHERE id = ?",
         (encrypted, user_id),
@@ -623,7 +640,7 @@ def get_wechat_session_key(user_id: int) -> str:
     ).fetchone()
     if not row or not row["wechat_session_key"]:
         return ""
-    return _decrypt_token(row["wechat_session_key"], user_id, "wechat")
+    return _decrypt_token_compat(row["wechat_session_key"], user_id, "wechat")
 
 
 def decrypt_wechat_werun(encrypted_data_b64: str, iv_b64: str, session_key_b64: str) -> dict:
@@ -645,8 +662,8 @@ def decrypt_wechat_werun(encrypted_data_b64: str, iv_b64: str, session_key_b64: 
 
 def save_oauth_token(platform: str, access_token: str, refresh_token=None, expires_at=None, scopes=None, user_id: int = 1):
     conn = get_db()
-    encrypted_access = _encrypt_token(access_token, user_id, platform)
-    encrypted_refresh = _encrypt_token(refresh_token or "", user_id, platform)
+    encrypted_access = encrypt_field(access_token)
+    encrypted_refresh = encrypt_field(refresh_token or "")
     conn.execute(
         "INSERT OR REPLACE INTO oauth_tokens (user_id, platform, access_token, refresh_token, expires_at, scopes, updated_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))",
         (user_id, platform, encrypted_access, encrypted_refresh, expires_at or 0, scopes),
@@ -673,8 +690,8 @@ def get_oauth_token(platform: str, user_id: int = 1):
     if not row:
         return None
     result = dict(row)
-    result["access_token"] = _decrypt_token(result.get("access_token", ""), user_id, platform)
-    result["refresh_token"] = _decrypt_token(result.get("refresh_token", ""), user_id, platform)
+    result["access_token"] = _decrypt_token_compat(result.get("access_token", ""), user_id, platform)
+    result["refresh_token"] = _decrypt_token_compat(result.get("refresh_token", ""), user_id, platform)
     return result
 
 
@@ -733,7 +750,7 @@ def insert_health_data_batch(user_id: int, records: list):
                 continue
             valid.append((
                 user_id, r["date"], r["source_platform"], dt,
-                val, r.get("unit") or "", r.get("detail_json"),
+                val, r.get("unit") or "", encrypt_field(r.get("detail_json")),
             ))
         except (KeyError, ValueError, TypeError):
             pass
@@ -919,3 +936,33 @@ def cleanup_archived_data(older_than_days=7):
     ).rowcount
     conn.commit()
     return count
+
+
+# ── GDPR 级联删除（被遗忘权）────────────────────────────────────
+
+# heart_rate_samples 先删（外键引用 workout_sessions）
+_USER_DATA_TABLES = [
+    "heart_rate_samples", "workout_sessions", "workout_logs",
+    "body_metrics", "nutrition_logs", "oauth_tokens", "health_data",
+    "health_sync_log", "user_profile", "chat_history",
+    "health_daily_summary", "import_jobs", "training_feedback",
+    "training_plans", "subscriptions", "payments",
+]
+
+
+def delete_user_data_cascade(user_id: int) -> int:
+    """删除某个用户在所有业务表中的全部数据（GDPR 被遗忘权）。
+
+    只删同步 sqlite 业务表；SQLAlchemy 的 users/settings 由调用方删除。
+    返回删除的总行数。
+    """
+    conn = get_db()
+    total = 0
+    for table in _USER_DATA_TABLES:
+        try:
+            cur = conn.execute(f"DELETE FROM {table} WHERE user_id = ?", (user_id,))
+            total += cur.rowcount
+        except sqlite3.OperationalError:
+            pass  # 表可能尚不存在
+    conn.commit()
+    return total

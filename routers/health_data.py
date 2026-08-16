@@ -9,6 +9,7 @@ from fastapi import APIRouter, Request, HTTPException
 from core.dependencies import get_user_id, validate_days
 from core.cache import default_cache
 from core.db_utils import db_fetch, db_execute
+from core.crypto import encrypt_field
 from tools.fitai_database import (get_health_data_history_json,
                                    insert_health_data_batch, get_oauth_token)
 from tools.fitai_tools import invalidate_user_analysis_cache
@@ -265,7 +266,7 @@ async def health_config_save(platform: str, request: Request):
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON")
     await db_execute("INSERT OR REPLACE INTO platform_config (platform, client_id, client_secret) VALUES (?, ?, ?)",
-               (platform, body.get("client_id", ""), body.get("client_secret", "")))
+               (platform, body.get("client_id", ""), encrypt_field(body.get("client_secret", ""))))
     return {"message": f"{platform} credentials saved"}
 
 

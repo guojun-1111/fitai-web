@@ -6,6 +6,7 @@ import json
 from fastapi import APIRouter, Request, HTTPException
 from core.dependencies import get_user_id
 from core.db_utils import db_fetch, db_execute
+from core.crypto import encrypt_field, decrypt_field
 
 router = APIRouter(tags=["profile"])
 
@@ -25,8 +26,11 @@ async def get_profile(request: Request):
     if not rows:
         return PROFILE_DEFAULTS
     row = rows[0]
-    return {k: (row[k] if row[k] is not None else ("" if k != "birth_year" else None))
-            for k in PROFILE_DEFAULTS}
+    result = {k: (row[k] if row[k] is not None else ("" if k != "birth_year" else None))
+              for k in PROFILE_DEFAULTS}
+    for k in ("name", "gender", "notes"):
+        result[k] = decrypt_field(result.get(k, ""))
+    return result
 
 
 @router.post("/api/profile")
@@ -42,9 +46,9 @@ async def save_profile(request: Request):
         INSERT OR REPLACE INTO user_profile
         (user_id, name, gender, birth_year, height_cm, weight_kg, fitness_goal, activity_level, notes, coach_style, equipment, experience_level, time_per_session)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (user_id, body.get("name", ""), body.get("gender", ""),
+    """, (user_id, encrypt_field(body.get("name", "")), encrypt_field(body.get("gender", "")),
           body.get("birth_year"), body.get("height_cm"), body.get("weight_kg"),
-          body.get("fitness_goal", ""), body.get("activity_level", ""), body.get("notes", ""),
+          body.get("fitness_goal", ""), body.get("activity_level", ""), encrypt_field(body.get("notes", "")),
           body.get("coach_style", "friend"),
           body.get("equipment", ""), body.get("experience_level", ""), body.get("time_per_session", "")))
     return {"ok": True}

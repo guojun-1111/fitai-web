@@ -25,6 +25,10 @@ FITAI_HOST = os.getenv("FITAI_HOST", "127.0.0.1")
 FITAI_PORT = int(os.getenv("FITAI_PORT", "8000"))
 
 DATABASE_PATH = PROJECT_ROOT / "data" / "fitai.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "")  # 空则走默认 SQLite
+
+# Field-level encryption master key (32-byte base64). See core/crypto.py.
+ENCRYPTION_SECRET_KEY = os.getenv("ENCRYPTION_SECRET_KEY", "")
 
 REMOTE_SETUP_SECRET_TTL_MINUTES = int(os.getenv("REMOTE_SETUP_SECRET_TTL_MINUTES", "30"))
 
