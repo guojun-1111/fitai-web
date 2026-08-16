@@ -10,7 +10,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/license-MIT%2FAGPL--3.0-green.svg" alt="License">
-  <img src="https://img.shields.io/badge/tests-113%20passed-brightgreen.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/tests-126%20passed-brightgreen.svg" alt="Tests">
   <img src="https://img.shields.io/badge/docker-ready-blue.svg" alt="Docker">
 </p>
 
@@ -64,7 +64,7 @@ python server.py
 
 ---
 
-## Core Algorithms (Academic Publications)
+## Core Algorithms
 
 ### 1. Causal Health Discovery — `fitai/analysis/causal_discovery.py`
 
@@ -185,13 +185,12 @@ If you use FitAI-Web's algorithms in your research, please cite:
 }
 ```
 
-Paper available on arXiv: *"Probabilistic Inference for Lightweight Edge Fitness Coaching"* (2026)
-
 ---
 
 ## Community
 
 - [GitHub Discussions](https://github.com/guojun-1111/fitai-web/discussions)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ---
 

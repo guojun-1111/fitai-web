@@ -5,7 +5,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 ## Development Setup
 
 ```bash
-git clone https://github.com/yourusername/fitai-web.git
+git clone https://github.com/guojun-1111/fitai-web.git
 cd fitai-web
 pip install -r requirements.txt
 cp .env.example .env
@@ -33,7 +33,7 @@ fitai-web/
 ├── fitai/health_platforms/ Health data importers
 ├── static/                Vanilla JS SPA frontend
 ├── miniapp/               WeChat Mini-Program
-├── tests/                 113 test functions
+├── tests/                 126 test functions
 └── scripts/               Benchmark & utility scripts
 ```
 
@@ -80,5 +80,5 @@ pytest tests/test_analysis.py::test_causal_discovery_pc_stable -v
 
 ## Need Help?
 
-- [GitHub Discussions](https://github.com/yourusername/fitai-web/discussions)
-- [Discord](https://discord.gg/placeholder)
+- [GitHub Issues](https://github.com/guojun-1111/fitai-web/issues)
+- [GitHub Discussions](https://github.com/guojun-1111/fitai-web/discussions)
