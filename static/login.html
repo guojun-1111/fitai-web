@@ -12,10 +12,18 @@
     min-height: 100vh; display: flex; align-items: center; justify-content: center; color: #1d1d1f;
   }
   .card {
+    position: relative;
     background: #ffffff; border: 1px solid rgba(0,0,0,0.06);
     border-radius: 18px; padding: 40px; width: 100%; max-width: 400px;
     box-shadow: 0 12px 40px rgba(0,0,0,0.08);
   }
+  .lang-toggle {
+    position: absolute; top: 16px; right: 16px;
+    background: #f5f5f7; border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 999px; padding: 4px 12px; font-size: 12px; color: #1d1d1f;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .lang-toggle:hover { background: #ebebed; }
   .logo { text-align: center; margin-bottom: 24px; }
   .logo h1 { font-size: 32px; font-weight: 800; color: #1d1d1f; letter-spacing: -0.02em; }
   .logo p { font-size: 13px; color: #86868b; margin-top: 4px; }
@@ -38,44 +46,123 @@
 </head>
 <body>
 <div class="card">
+  <button id="langToggle" class="lang-toggle" onclick="toggleLang()">EN</button>
   <div class="logo">
     <h1>FitAI</h1>
-    <p>智能运动健康助手</p>
+    <p data-i18n="subtitle">智能运动健康助手</p>
     <p id="pageHint" style="margin-top:12px;font-size:13px;color:#667;"></p>
   </div>
   <div id="setupForm">
     <form class="form" onsubmit="handleSetup(event)">
-      <label>设置管理员账号</label>
-      <input id="sUser" placeholder="账号（3-32位）" required autocomplete="username">
-      <label>设置密码</label>
-      <input id="sPass" type="password" placeholder="至少8位，含大小写字母+数字" required autocomplete="new-password">
-      <label>确认密码</label>
-      <input id="sPass2" type="password" placeholder="再次输入密码" required>
-      <div class="hint">密码要求：至少 8 位，必须同时包含大写字母、小写字母和数字</div>
+      <label data-i18n="setupAccount">设置管理员账号</label>
+      <input id="sUser" data-i18n-ph="setupUserPh" placeholder="账号（3-32位）" required autocomplete="username">
+      <label data-i18n="setupPass">设置密码</label>
+      <input id="sPass" data-i18n-ph="setupPassPh" type="password" placeholder="至少8位，含大小写字母+数字" required autocomplete="new-password">
+      <label data-i18n="confirmPass">确认密码</label>
+      <input id="sPass2" data-i18n-ph="confirmPassPh" type="password" placeholder="再次输入密码" required>
+      <div class="hint" data-i18n="passRule">密码要求：至少 8 位，必须同时包含大写字母、小写字母和数字</div>
       <div id="setupError" class="error"></div>
-      <button class="btn" type="submit" id="setupBtn">设置并登录</button>
+      <button class="btn" type="submit" id="setupBtn" data-i18n="setupBtn">设置并登录</button>
     </form>
   </div>
   <div id="authForm">
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('login')">登录</button>
-      <button class="tab" id="regTab" onclick="switchTab('register')">注册</button>
+      <button class="tab active" onclick="switchTab('login')" data-i18n="login">登录</button>
+      <button class="tab" id="regTab" onclick="switchTab('register')" data-i18n="register">注册</button>
     </div>
     <form class="form" onsubmit="handleAuth(event)" autocomplete="on">
-      <label>账号</label>
-      <input id="aUser" placeholder="请输入账号" required autocomplete="username">
-      <label>密码</label>
-      <input id="aPass" type="password" placeholder="请输入密码" required autocomplete="current-password">
+      <label data-i18n="username">账号</label>
+      <input id="aUser" data-i18n-ph="usernamePh" placeholder="请输入账号" required autocomplete="username">
+      <label data-i18n="password">密码</label>
+      <input id="aPass" data-i18n-ph="passwordPh" type="password" placeholder="请输入密码" required autocomplete="current-password">
       <div id="confirmField" style="display:none;">
-        <label>确认密码</label>
-        <input id="aPass2" type="password" placeholder="再次输入密码" autocomplete="new-password">
+        <label data-i18n="confirmPass">确认密码</label>
+        <input id="aPass2" data-i18n-ph="confirmPassPh" type="password" placeholder="再次输入密码" autocomplete="new-password">
       </div>
       <div id="authError" class="error"></div>
-      <button class="btn" type="submit" id="authBtn">登录</button>
+      <button class="btn" type="submit" id="authBtn" data-i18n="login">登录</button>
     </form>
   </div>
 </div>
 <script>
+var T = {
+  zh: {
+    title: 'FitAI — 登录',
+    subtitle: '智能运动健康助手',
+    setupAccount: '设置管理员账号',
+    setupUserPh: '账号（3-32位）',
+    setupPass: '设置密码',
+    setupPassPh: '至少8位，含大小写字母+数字',
+    confirmPass: '确认密码',
+    confirmPassPh: '再次输入密码',
+    passRule: '密码要求：至少 8 位，必须同时包含大写字母、小写字母和数字',
+    setupBtn: '设置并登录',
+    login: '登录',
+    register: '注册',
+    username: '账号',
+    usernamePh: '请输入账号',
+    password: '密码',
+    passwordPh: '请输入密码',
+    firstSetup: '首次初始化，请设置管理员账号和密码',
+    contactAdmin: '请先联系管理员完成首次初始化',
+    cannotConnect: '无法连接到服务器',
+    mismatch: '两次输入的密码不一致',
+    opFailed: '操作失败',
+    netError: '网络错误，请重试'
+  },
+  en: {
+    title: 'FitAI — Sign in',
+    subtitle: 'Your intelligent fitness & health coach',
+    setupAccount: 'Set admin account',
+    setupUserPh: 'Username (3-32 chars)',
+    setupPass: 'Set password',
+    setupPassPh: 'At least 8 chars: upper + lower + digit',
+    confirmPass: 'Confirm password',
+    confirmPassPh: 'Re-enter password',
+    passRule: 'Password: at least 8 characters, with uppercase, lowercase, and a digit',
+    setupBtn: 'Set up & sign in',
+    login: 'Sign in',
+    register: 'Register',
+    username: 'Username',
+    usernamePh: 'Enter username',
+    password: 'Password',
+    passwordPh: 'Enter password',
+    firstSetup: 'First-time setup: create your admin account',
+    contactAdmin: 'Please ask the admin to complete the initial setup',
+    cannotConnect: 'Cannot connect to the server',
+    mismatch: 'Passwords do not match',
+    opFailed: 'Operation failed',
+    netError: 'Network error, please retry'
+  }
+};
+
+var lang = localStorage.getItem('fitai-lang');
+if (!lang) {
+  lang = (navigator.language || '').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en';
+}
+
+function t(key) { return (T[lang] && T[lang][key]) || T.en[key] || key; }
+
+function applyLang() {
+  document.documentElement.lang = (lang === 'zh') ? 'zh-CN' : 'en';
+  document.title = t('title');
+  var els = document.querySelectorAll('[data-i18n]');
+  for (var i = 0; i < els.length; i++) { els[i].textContent = t(els[i].getAttribute('data-i18n')); }
+  var phs = document.querySelectorAll('[data-i18n-ph]');
+  for (var j = 0; j < phs.length; j++) { phs[j].placeholder = t(phs[j].getAttribute('data-i18n-ph')); }
+  var tg = document.getElementById('langToggle');
+  if (tg) tg.textContent = (lang === 'zh') ? 'EN' : '中文';
+  var btn = document.getElementById('authBtn');
+  if (btn) btn.textContent = t(mode === 'register' ? 'register' : 'login');
+}
+
+function toggleLang() {
+  lang = (lang === 'zh') ? 'en' : 'zh';
+  localStorage.setItem('fitai-lang', lang);
+  applyLang();
+  init();
+}
+
 let mode = 'login';
 let isSetup = false;
 const urlParams = new URLSearchParams(window.location.search);
@@ -90,26 +177,26 @@ async function init() {
     if (isSetup) {
       document.getElementById('setupForm').style.display = 'block';
       document.getElementById('authForm').style.display = 'none';
-      document.getElementById('pageHint').textContent = '首次初始化，请设置管理员账号和密码';
+      document.getElementById('pageHint').textContent = t('firstSetup');
     } else if (!data.auth_enabled) {
-      document.getElementById('pageHint').textContent = '请先联系管理员完成首次初始化';
+      document.getElementById('pageHint').textContent = t('contactAdmin');
       document.getElementById('regTab').style.display = 'none';
     }
     if (!data.registration_allowed && !isSetup && data.auth_enabled) {
       document.getElementById('regTab').style.display = 'none';
     }
   } catch(e) {
-    document.getElementById('pageHint').textContent = '无法连接到服务器';
+    document.getElementById('pageHint').textContent = t('cannotConnect');
   }
 }
 
-function switchTab(t) {
-  mode = t;
+function switchTab(tab) {
+  mode = tab;
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-  var target = t === 'login' ? document.querySelector('.tab[onclick*="login"]') : document.getElementById('regTab');
+  var target = tab === 'login' ? document.querySelector('.tab[onclick*="login"]') : document.getElementById('regTab');
   if (target) target.classList.add('active');
-  document.getElementById('confirmField').style.display = t === 'register' ? 'block' : 'none';
-  document.getElementById('authBtn').textContent = t === 'login' ? '登录' : '注册';
+  document.getElementById('confirmField').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('authBtn').textContent = t(tab === 'login' ? 'login' : 'register');
   document.getElementById('authError').classList.remove('show');
 }
 
@@ -119,7 +206,7 @@ async function handleSetup(e) {
   const p = document.getElementById('sPass').value;
   const p2 = document.getElementById('sPass2').value;
   const err = document.getElementById('setupError');
-  if (p !== p2) { err.textContent = '两次输入的密码不一致'; err.classList.add('show'); return; }
+  if (p !== p2) { err.textContent = t('mismatch'); err.classList.add('show'); return; }
   err.classList.remove('show');
   document.getElementById('setupBtn').disabled = true;
   try {
@@ -128,10 +215,10 @@ async function handleSetup(e) {
       body: JSON.stringify({username: u, password: p})
     });
     const data = await resp.json();
-    if (!resp.ok) { err.textContent = data.detail || '操作失败'; err.classList.add('show'); return; }
+    if (!resp.ok) { err.textContent = data.detail || t('opFailed'); err.classList.add('show'); return; }
     window.location.href = '/app';
   } catch(ex) {
-    err.textContent = '网络错误，请重试'; err.classList.add('show');
+    err.textContent = t('netError'); err.classList.add('show');
   } finally {
     document.getElementById('setupBtn').disabled = false;
   }
@@ -144,7 +231,7 @@ async function handleAuth(e) {
   const err = document.getElementById('authError');
   if (mode === 'register') {
     const p2 = document.getElementById('aPass2').value;
-    if (p !== p2) { err.textContent = '两次输入的密码不一致'; err.classList.add('show'); return; }
+    if (p !== p2) { err.textContent = t('mismatch'); err.classList.add('show'); return; }
   }
   err.classList.remove('show');
   document.getElementById('authBtn').disabled = true;
@@ -156,15 +243,16 @@ async function handleAuth(e) {
       body: JSON.stringify(body)
     });
     const data = await resp.json();
-    if (!resp.ok) { err.textContent = data.detail || '操作失败'; err.classList.add('show'); return; }
+    if (!resp.ok) { err.textContent = data.detail || t('opFailed'); err.classList.add('show'); return; }
     window.location.href = '/app';
   } catch(ex) {
-    err.textContent = '网络错误，请重试'; err.classList.add('show');
+    err.textContent = t('netError'); err.classList.add('show');
   } finally {
     document.getElementById('authBtn').disabled = false;
   }
 }
 
+applyLang();
 init();
 </script>
 </body>
