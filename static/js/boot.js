@@ -56,6 +56,7 @@ import { handleFileSelect } from './import.js';
 import { openCamera } from './camera.js';
 import { initExerciseLibrary, loadExerciseLibrary } from './exercise-library.js';
 import { deleteUser, toggleRegistration, logout, setTheme, loadSession } from './auth.js';
+import { exportData, deleteAccount } from './privacy.js';
 
 // ── Expose for HTML onclick handlers ──
 window.quickSend = quickSend;
@@ -76,6 +77,8 @@ window.openExDetail = openExDetail;
 window.closeExDetail = closeExDetail;
 window.closeHealthDetail = closeHealthDetail;
 window._switchModelSilent = switchModelSilent;
+window.exportData = exportData;
+window.deleteAccount = deleteAccount;
 
 // ── iOS Safari viewport height fix ──
 // iOS 的 100vh 包含地址栏高度，比实际可视区大，导致底部 tab bar 被挤出屏幕
