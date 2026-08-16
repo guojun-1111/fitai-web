@@ -10,11 +10,17 @@ import sqlite3
 # Ensure project root is in path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# 隔离 SQLAlchemy async 层（auth）：指向临时文件，避免污染真实 data/fitai.db
+# 必须在 import database / server 之前设置（本模块在测试收集期最先加载）
+import tempfile
+_TEST_DB_DIR = tempfile.mkdtemp(prefix="fitai_test_")
+os.environ["DATABASE_URL"] = f"sqlite+aiosqlite:///{_TEST_DB_DIR}/auth.db"
+
 
 @pytest.fixture
 def test_db():
     """In-memory SQLite database with full schema for testing."""
-    db = sqlite3.connect(":memory:")
+    db = sqlite3.connect(":memory:", check_same_thread=False)
     db.row_factory = sqlite3.Row
     db.execute("PRAGMA journal_mode=WAL")
 
@@ -122,7 +128,11 @@ def test_db():
             weight_kg REAL,
             fitness_goal TEXT DEFAULT '',
             activity_level TEXT DEFAULT '',
-            notes TEXT DEFAULT ''
+            notes TEXT DEFAULT '',
+            coach_style TEXT DEFAULT 'friend',
+            equipment TEXT DEFAULT '',
+            experience_level TEXT DEFAULT '',
+            time_per_session TEXT DEFAULT ''
         );
         CREATE TABLE IF NOT EXISTS import_jobs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -162,3 +172,39 @@ def monkeypatch_fitai_db(monkeypatch, test_db):
 
     monkeypatch.setattr(fidb, "init_db", mock_init_db)
     return test_db
+
+
+@pytest.fixture
+def client(monkeypatch_fitai_db, monkeypatch):
+    """TestClient + 已认证测试用户（Bearer token），双 DB 层隔离。"""
+    import uuid as _uuid
+    import asyncio as _asyncio
+
+    # lifespan 里 init_fitai_db 绑定的是原 init_db（绕过 monkeypatch_fitai_db 的 init_db patch），需额外 patch
+    import core.lifespan as lifespan_mod
+    monkeypatch.setattr(lifespan_mod, "init_fitai_db", lambda: None)
+
+    # 避免后台 import worker 线程干扰测试
+    import routers.import_data as import_data
+    monkeypatch.setattr(import_data, "start_import_worker", lambda: None)
+
+    from fastapi.testclient import TestClient
+    from server import app
+
+    # 直接创建用户 + session token（绕开 secure cookie 与 registration 关闭）
+    from auth.utils import create_user, create_session
+    username = f"test_{_uuid.uuid4().hex[:8]}"
+    password = "TestPass123"
+
+    async def _setup():
+        from database import init_db
+        await init_db()  # 建 users/settings 表
+        ok, msg, info = await create_user(username, password)
+        assert ok, f"create_user failed: {msg}"
+        return await create_session(username, info["id"])
+
+    token = _asyncio.run(_setup())
+
+    with TestClient(app) as c:
+        c.headers["Authorization"] = f"Bearer {token}"
+        yield c
