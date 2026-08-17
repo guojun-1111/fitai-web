@@ -2,8 +2,12 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 """FitAI Web — 轻量多用户智能健身助手"""
+import sys
 import mimetypes
 from pathlib import Path
+
+# 无论从哪个目录启动，都能 import 顶层模块（database/config/auth/...）
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 mimetypes.add_type("image/webp", ".webp")
 mimetypes.add_type("application/javascript", ".mjs")
