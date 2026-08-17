@@ -16,6 +16,16 @@
 
 ---
 
+<p align="center">
+  <img src="assets/demo.gif" alt="FitAI real-time pose correction" width="800" />
+</p>
+
+**FitAI watches your form, tells you *why* your recovery dipped, and plans tomorrow — self-hosted, privacy-first.**
+
+- **Real-time form correction** — point a camera and FitAI corrects your squat, push-up, plank, lunge, and YTW live (MediaPipe).
+- **Causal, not just descriptive** — PC-stable causal discovery + Bayesian recovery scoring explain *why* your body responded the way it did.
+- **Self-hosted & private** — your health data stays on your machine. Runs on a $5/mo VPS with zero numpy/scipy (pure Python stdlib).
+
 ## What is FitAI-Web?
 
 FitAI-Web is a full-stack, open-source AI fitness coaching platform that combines **causal inference**, **Bayesian recovery modeling**, and **probabilistic anomaly detection** with a conversational AI agent. Unlike fitness trackers that only show you *what* happened, FitAI tells you **why** it happened and **what to do about it**.
