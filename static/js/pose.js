@@ -199,6 +199,10 @@ export async function startPoseSession() {
     });
     _videoEl.srcObject = stream;
     await _videoEl.play();
+    syncCanvasSize();
+    if (!_videoEl.videoWidth || !_videoEl.videoHeight) {
+      _videoEl.addEventListener('loadedmetadata', syncCanvasSize, { once: true });
+    }
 
     if (!_poseLandmarker) {
       console.log('pose: loading vision bundle...');
@@ -214,7 +218,7 @@ export async function startPoseSession() {
         try {
           _poseLandmarker = await Vision.PoseLandmarker.createFromOptions(fileset, {
             baseOptions: {
-              modelAssetPath: '/mediapipe/pose_landmarker_full.task?v=121364',
+              modelAssetPath: '/mediapipe/pose_landmarker_lite.task?v=121364',
               delegate: delegates[d]
             },
             runningMode: 'VIDEO',
@@ -359,6 +363,15 @@ function sendRepDataForAnalysis() {
 
 // ── Mirror fallback (show camera feed on canvas before model loads) ──
 
+function syncCanvasSize() {
+  if (!_canvasEl || !_videoEl) return;
+  var vw = _videoEl.videoWidth, vh = _videoEl.videoHeight;
+  if (vw && vh) {
+    _canvasEl.width = vw;
+    _canvasEl.height = vh;
+  }
+}
+
 function drawMirrorFallback() {
   if (!_ctx || !_canvasEl || !_videoEl) return;
   function _mirror() {
@@ -376,14 +389,14 @@ function drawMirrorFallback() {
 
 // ── Detection Loop ──
 
-var _frameSkip = 0;
+var _lastDetectTime = 0;
 function detectLoop() {
   if (!_isRunning) return;
 
-  _frameSkip++;
   var now = performance.now();
-  // Skip every other frame to reduce GPU/CPU load on slower devices
-  if (_poseLandmarker && _videoEl && _videoEl.readyState >= 3 && _frameSkip % 2 === 0) {
+  // Time-throttle detection to ~20fps to keep low-end phones responsive
+  if (_poseLandmarker && _videoEl && _videoEl.readyState >= 3 && (now - _lastDetectTime >= 50)) {
+    _lastDetectTime = now;
     try {
       var results = _poseLandmarker.detectForVideo(_videoEl, now);
       if (results && results.landmarks && results.landmarks.length > 0) {
@@ -647,20 +660,41 @@ function hideDiagnosisCard() {
 
 // ── Indicators ──
 
+var _indicatorRows = null;
 function updateIndicators(kneeAngle, hipAngle, backAngle, kneeValgus, kneeStatus, hipStatus, backStatus, valgusStatus) {
   if (!_indicatorsEl) return;
+  if (!_indicatorRows) {
+    _indicatorRows = _indicatorsEl.querySelectorAll('.pi-row');
+    if (!_indicatorRows.length) return;
+  }
 
-  // V21: Add confidence level to knee indicator
-  var kneeConfNote = '';
+  var vals = [kneeAngle + '°', hipAngle + '°', backAngle + '°', kneeValgus.toFixed(1)];
+  var statuses = [kneeStatus, hipStatus, backStatus, valgusStatus];
+  for (var i = 0; i < 4; i++) {
+    var row = _indicatorRows[i];
+    if (!row) continue;
+    row.className = 'pi-row ' + statuses[i];
+    var val = row.querySelector('.pi-val');
+    if (val) val.textContent = vals[i];
+  }
+
+  // V21: knee confidence marker (reuse a single span instead of innerHTML rebuild)
   var kc = _conformalKnee.getConfidence(kneeAngle);
-  if (kc < 50) kneeConfNote = ' <span class="pi-conf-low">?</span>';
-  else if (kc >= 80) kneeConfNote = ' <span class="pi-conf-high">✓</span>';
-
-  _indicatorsEl.innerHTML =
-    '<div class="pi-row ' + kneeStatus + '"><span class="pi-label">膝角</span><span class="pi-val">' + kneeAngle + '°' + kneeConfNote + '</span></div>' +
-    '<div class="pi-row ' + hipStatus + '"><span class="pi-label">髋角</span><span class="pi-val">' + hipAngle + '°</span></div>' +
-    '<div class="pi-row ' + backStatus + '"><span class="pi-label">背角</span><span class="pi-val">' + backAngle + '°</span></div>' +
-    '<div class="pi-row ' + valgusStatus + '"><span class="pi-label">膝距</span><span class="pi-val">' + kneeValgus.toFixed(1) + '</span></div>';
+  var row0 = _indicatorRows[0];
+  if (row0) {
+    var val0 = row0.querySelector('.pi-val');
+    if (val0) {
+      var mark = row0.querySelector('.pi-conf');
+      if (!mark) {
+        mark = document.createElement('span');
+        mark.className = 'pi-conf';
+        val0.appendChild(mark);
+      }
+      if (kc < 50) { mark.className = 'pi-conf pi-conf-low'; mark.textContent = '?'; }
+      else if (kc >= 80) { mark.className = 'pi-conf pi-conf-high'; mark.textContent = '✓'; }
+      else { mark.textContent = ''; }
+    }
+  }
 }
 
 function updateUI() {

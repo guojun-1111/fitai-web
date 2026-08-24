@@ -45,8 +45,8 @@ body::before { display: none; }
   display: flex;
   flex-direction: row;
   z-index: 100;
-  padding: 6px 6px;
-  padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+  padding: 4px 4px;
+  padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
   background: var(--bg);
   border-top: 1px solid var(--border);
   border-right: none;
@@ -68,12 +68,12 @@ body::before { display: none; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 4px;
+  padding: 4px 2px;
   background: none;
   border: none;
   border-radius: var(--radius-sm);
   color: var(--text2);
-  font-size: 10px;
+  font-size: 9px;
   cursor: pointer;
   min-height: unset;
   touch-action: manipulation;
@@ -84,18 +84,18 @@ body::before { display: none; }
 .nav-btn > *:not(:last-child) { margin-bottom: 2px; }
 .nav-btn:hover { background: var(--surface); color: var(--text); }
 .nav-btn.active { background: var(--green-dim); color: var(--green); }
-.nav-btn .nav-icon { font-size: 20px; margin: 0; }
+.nav-btn .nav-icon { font-size: 17px; margin: 0; }
 
 /* ===== 主内容区 ===== */
 .main-content {
   position: fixed;
   top: 0;
-  left: 0 !important; right: 0 !important; bottom: calc(48px + max(12px, env(safe-area-inset-bottom, 12px)));
+  left: 0 !important; right: 0 !important; bottom: calc(48px + env(safe-area-inset-bottom, 0px));
   margin-left: 0 !important; width: 100% !important; max-width: 100vw !important;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: calc(var(--vh, 1dvh) * 100 - 56px - max(12px, env(safe-area-inset-bottom, 12px)));
+  height: calc(var(--vh, 1dvh) * 100 - 48px - env(safe-area-inset-bottom, 0px));
   padding: 24px 0 0 0;
   padding-top: max(24px, env(safe-area-inset-top, 0px));
   -webkit-transform: translateZ(0);
@@ -395,4 +395,23 @@ body::before { display: none; }
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
   background: rgba(255,255,255,0.95);
+}
+
+/* ===== 新人引导移动端适配 ===== */
+.onboarding-overlay { -webkit-overflow-scrolling: touch; padding: 12px; }
+.onboarding-card { width: 100%; padding: 1.5rem 1.25rem; }
+
+/* ===== 动作纠正面板移动端适配 ===== */
+.pose-video-wrap { border-radius: 10px; overflow: hidden; background: #000; }
+.pose-cue { font-size: 0.95rem; }
+
+/* ===== 备案号固定到底部（避免与首页顶部重叠） ===== */
+.site-footer {
+  position: fixed; left: 0; right: 0;
+  bottom: calc(48px + env(safe-area-inset-bottom, 0px));
+  z-index: 90; background: var(--bg);
+  font-size: 10px !important;
+  padding: 6px 0 !important;
+  line-height: 1.6 !important;
+  text-align: center;
 }

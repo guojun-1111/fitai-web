@@ -196,7 +196,7 @@ async function authGate() {
 // Register Service Worker for PWA (only in production, not localhost)
 if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js?v=16').then((reg) => {
+    navigator.serviceWorker.register('/sw.js?v=24').then((reg) => {
       console.log('SW registered:', reg.scope);
       // Force update check on every page load (Safari is lazy about this)
       reg.update();

@@ -1,5 +1,5 @@
 // FitAI Service Worker — Offline caching + V11 API cache
-const CACHE_VERSION = 'fitai-v17';
+const CACHE_VERSION = 'fitai-v24';
 const STATIC_CACHE = CACHE_VERSION + '-static';
 const CDN_CACHE = CACHE_VERSION + '-cdn';
 const API_CACHE = CACHE_VERSION + '-api';
