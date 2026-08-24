@@ -27,7 +27,11 @@
 ---
 
 <p align="center">
-  <img src="assets/demo.gif" alt="FitAI real-time pose correction" width="800" />
+  <a href="https://fitmate.top">
+    <img src="assets/demo.gif" alt="FitAI demo — click to watch full video" width="800" />
+  </a>
+  <br />
+  <sub>Click to watch the full demo video (with sound)</sub>
 </p>
 
 **FitAI watches your form, tells you *why* your recovery dipped, and plans tomorrow — self-hosted, privacy-first.**

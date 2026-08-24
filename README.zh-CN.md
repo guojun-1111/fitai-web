@@ -27,7 +27,11 @@
 ---
 
 <p align="center">
-  <img src="assets/demo.gif" alt="FitAI 实时动作纠正" width="800" />
+  <a href="https://fitmate.top">
+    <img src="assets/demo.gif" alt="FitAI 演示 — 点击观看完整视频" width="800" />
+  </a>
+  <br />
+  <sub>点击观看完整演示视频（带声音）</sub>
 </p>
 
 **FitAI 盯着你的动作，告诉你恢复分数为什么下降，并帮你规划明天——自托管、隐私优先。**
