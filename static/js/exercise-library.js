@@ -1,12 +1,37 @@
 // FitAI Exercise Library — browse 1,324 standard exercises with GIFs
 let currentCategory = '', currentEquipment = '', currentDifficulty = '', currentKeyword = '';
 let searchTimer = null;
+let allExercises = [];
+let renderedCount = 0;
+const PAGE_SIZE = 24;
+
+function exlibGifUrl(imageUrl) {
+  const mediaId = (imageUrl || '').split('/').pop().replace(/\.(gif|jpg|jpeg|png)$/i, '');
+  return mediaId ? `/api/exercises/image/${mediaId}` : '';
+}
+
+function exlibCard(e) {
+  const gifUrl = exlibGifUrl(e.image_url);
+  const diffStars = '⭐'.repeat(e.difficulty_level || 3);
+  return `<div class="exlib-card" onclick="window._showExlibDetail('${e.id}')" title="${e.name}">
+    <div class="exlib-gif-wrap">
+      <img src="${gifUrl}" alt="${e.name}" loading="lazy" decoding="async" onerror="this.style.display='none'">
+      <span class="exlib-equip-tag">${e.equipment}</span>
+    </div>
+    <div class="exlib-info">
+      <div class="exlib-name">${e.name}</div>
+      <div class="exlib-meta">${e.body_part} · ${diffStars}</div>
+    </div>
+  </div>`;
+}
 
 export async function loadExerciseLibrary(category, equipment, difficulty, keyword) {
   currentCategory = category || '';
   currentEquipment = equipment || '';
   currentDifficulty = difficulty || '';
   currentKeyword = keyword || '';
+  allExercises = [];
+  renderedCount = 0;
 
   const grid = document.getElementById('exlib-grid');
   if (!grid) return;
@@ -33,30 +58,36 @@ export async function loadExerciseLibrary(category, equipment, difficulty, keywo
       return;
     }
 
-    grid.innerHTML = exercises.map(e => {
-      const gifUrl = (e.image_url || '').replace('/exercise-images/', '/exercise-gifs/').replace('.jpg', '.gif');
-      const diffStars = '⭐'.repeat(e.difficulty_level || 3);
-      return `<div class="exlib-card" onclick="window._showExlibDetail('${e.id}')" title="${e.name}">
-        <div class="exlib-gif-wrap">
-          <img src="${gifUrl}" alt="${e.name}" loading="lazy" onerror="this.style.display='none'">
-          <span class="exlib-equip-tag">${e.equipment}</span>
-        </div>
-        <div class="exlib-info">
-          <div class="exlib-name">${e.name}</div>
-          <div class="exlib-meta">${e.body_part} · ${diffStars}</div>
-        </div>
-      </div>`;
-    }).join('');
+    allExercises = exercises;
+    grid.innerHTML = '';
+    renderChunk();
 
   } catch (e) {
     grid.innerHTML = '<div class="empty-state"><p>加载失败</p></div>';
   }
 }
 
+function renderChunk() {
+  const grid = document.getElementById('exlib-grid');
+  if (!grid) return;
+  const next = allExercises.slice(renderedCount, renderedCount + PAGE_SIZE);
+  renderedCount += next.length;
+  const old = document.getElementById('exlib-load-more');
+  if (old) old.remove();
+  grid.insertAdjacentHTML('beforeend', next.map(exlibCard).join(''));
+  if (renderedCount < allExercises.length) {
+    grid.insertAdjacentHTML('beforeend', `<div id="exlib-load-more" style="grid-column:1/-1;text-align:center;padding:12px 0 24px">
+      <button onclick="window._loadMoreExlib()" style="padding:9px 30px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer">加载更多</button>
+    </div>`);
+  }
+}
+
+window._loadMoreExlib = function () { renderChunk(); };
+
 export function showExerciseDetail(exerciseId) {
   fetch(`/api/exercises/${exerciseId}`).then(r => r.json()).then(e => {
     if (e.error) return;
-    const gifUrl = (e.image_url || '').replace('/exercise-images/', '/exercise-gifs/').replace('.jpg', '.gif');
+    const gifUrl = exlibGifUrl(e.image_url);
     const modal = document.getElementById('exlib-modal');
     if (!modal) return;
     modal.innerHTML = `

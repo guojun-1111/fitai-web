@@ -2,9 +2,15 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 """V7.0: 训练动作库路由（从 server.py 提取）。"""
+import re
 from collections import Counter, defaultdict
+
+import httpx
 from fastapi import APIRouter, Request
+from fastapi.responses import Response
+
 from core.dependencies import get_user_id
+from core.cache import default_cache
 from tools.fitai_database import (search_exercises_db, get_exercise_by_id,
                                    get_exercise_categories, get_exercise_equipment,
                                    import_exercise_library, get_workout_history_json)
@@ -35,6 +41,31 @@ async def exercises_categories():
 @router.get("/api/exercises/equipment")
 async def exercises_equipment():
     return {"equipment": get_exercise_equipment()}
+
+
+@router.get("/api/exercises/image/{media_id}")
+async def exercise_image(media_id: str):
+    """代理 ExerciseDB 的 GIF 图片，绕开国内浏览器无法直连的 CDN。"""
+    media_id = re.sub(r"[^a-zA-Z0-9]", "", (media_id or "").split(".")[0])
+    if not media_id:
+        return Response(status_code=400)
+    cache_key = f"exgif:{media_id}"
+    cached = default_cache.get(cache_key, 180)
+    if cached is not None:
+        return Response(content=cached, media_type="image/gif",
+                        headers={"Cache-Control": "public, max-age=86400"})
+    url = f"https://static.exercisedb.dev/media/{media_id}.gif"
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            r = await client.get(url)
+        if r.status_code != 200:
+            return Response(status_code=502)
+        data = r.content
+        default_cache.set(cache_key, data)
+        return Response(content=data, media_type="image/gif",
+                        headers={"Cache-Control": "public, max-age=86400"})
+    except Exception:
+        return Response(status_code=502)
 
 
 @router.post("/api/exercises/import")
