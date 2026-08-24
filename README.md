@@ -14,6 +14,16 @@
   <img src="https://img.shields.io/badge/docker-ready-blue.svg" alt="Docker">
 </p>
 
+<p align="center">
+  <a href="https://fitmate.top">
+    <img src="https://img.shields.io/badge/Live%20Demo-fitmate.top-brightgreen?style=for-the-badge" alt="Live Demo">
+  </a>
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> · <a href="README.zh-CN.md">中文</a>
+</p>
+
 ---
 
 <p align="center">
